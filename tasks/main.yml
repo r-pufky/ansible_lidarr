@@ -1,0 +1,103 @@
+---
+###############################################################################
+# Lidarr Install
+###############################################################################
+# Lidarr v1
+#
+# Reference:
+# * https://lidarr.audio/#downloads-v1-linux-other
+# * https://github.com/lidarr/Lidarr/releases
+# * https://wiki.servarr.com/Lidarr_Installation#Debian.2FUbuntu
+
+- ansible.builtin.include_tasks: manage_users.yml
+
+# Mono is included in the lidarr repo, however this will install the
+# latest version directly from the mono repo.
+- name: 'install | add mono repo key'
+  ansible.builtin.apt_key:
+    keyserver: 'hkp://keyserver.ubuntu.com:80'
+    id:        '3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF'
+    state:     'present'
+
+- name: 'install | set mono version'
+  ansible.builtin.set_fact:
+    _lidarr_mono_version: '{% if ansible_distribution_release is not in lidarr_mono_supported_libraries %}{{ lidarr_default_mono_library }}{% else %}stable-{{ ansible_distribution_release }}{% endif %}'
+
+- name: 'install | add mono repo'
+  ansible.builtin.apt_repository:
+    repo:     'deb https://download.mono-project.com/repo/debian {{ _lidarr_mono_version }} main'
+    filename: 'mono'
+    update_cache: true
+    state:    'present'
+
+- name: 'install | install dependencies'
+  ansible.builtin.apt:
+    name:  '{{ lidarr_default_packages }}'
+    state: 'latest'
+
+- name: 'install | create lidarr directories'
+  ansible.builtin.file:
+    path:  '{{ item }}'
+    owner: '{{ lidarr_user }}'
+    group: '{{ lidarr_group }}'
+    mode:  0750
+    state: 'directory'
+  loop:
+    - '{{ lidarr_dir }}'
+    - '{{ lidarr_config }}'
+
+- name: 'install | check install binary'
+  ansible.builtin.stat:
+    path: '{{ lidarr_dir }}/Lidarr.exe'
+  register: _lidarr_binary
+
+- name: 'install | get lidarr'
+  ansible.builtin.get_url:
+    url:    'https://lidarr.servarr.com/v1/update/master/updatefile?os={{ lidarr_arch_c }}&runtime=netcore&arch={{ lidarr_arch_generic }}'
+    dest:   '/tmp/lidarr.tar.gz'
+    mode:   0644
+    owner:  '{{ lidarr_user }}'
+    group:  '{{ lidarr_group }}'
+  when: not _lidarr_binary.stat.exists
+
+- name: 'install | install'
+  ansible.builtin.unarchive:
+    src:        '/tmp/lidarr.tar.gz'
+    remote_src: true
+    dest:       '{{ lidarr_dir }}'
+    creates:    '{{ lidarr_dir }}/Lidarr.exe'
+    owner:      '{{ lidarr_user }}'
+    group:      '{{ lidarr_group }}'
+    mode:       'o-rwx'
+    # Remove the leading 'Lidarr/' directory in the archive
+    extra_opts: '--strip-components=1'
+  when: not _lidarr_binary.stat.exists
+  notify: 'restart lidarr'
+
+- name: 'install | set configuration'
+  ansible.builtin.template:
+    src:   'config.xml.j2'
+    dest:  '{{ lidarr_config }}/config.xml'
+    owner: '{{ lidarr_user }}'
+    group: '{{ lidarr_group }}'
+    mode:  0600 #0664 originally
+  notify: 'restart lidarr'
+
+- name: 'install | restart lidarr service daily'
+  ansible.builtin.cron:
+    name:         'restart lidarr service daily'
+    special_time: 'daily'
+    user:         'root'
+    job:          'service lidarr restart'
+    state:        'present'
+
+- name: 'install | set /etc/systemd/system/lidarr.service'
+  ansible.builtin.template:
+    src:   'lidarr.service.j2'
+    dest:  '/etc/systemd/system/lidarr.service'
+    owner: 'root'
+    group: 'root'
+    mode:  0644
+  notify:
+    - 'reload systemd'
+    - 'restart lidarr'

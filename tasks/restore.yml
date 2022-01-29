@@ -1,0 +1,55 @@
+---
+###############################################################################
+# Lidarr Restore
+###############################################################################
+# Restore an existing lidarr instance.
+#
+# Reference:
+# * https://github.com/NasKar2/freenas-backup-apps/blob/master/lidarrbackup.sh
+
+- name: 'restore | lidarr data is mounted, not local.'
+  ansible.builtin.fail:
+    msg: 'Restore task cannot be executed against a mountpoint; only local.'
+
+- name: 'restore | shutdown lidarr for restore'
+  ansible.builtin.service:
+    name:  'lidarr'
+    state: 'stopped'
+
+- name: 'restore | setup staging'
+  ansible.builtin.file:
+    path:  '{{ lidarr_staging }}'
+    mode:  0700
+    state: 'directory'
+
+- name: 'restore | prep restore'
+  ansible.builtin.file:
+    path:  '{{ lidarr_config }}'
+    owner: '{{ lidarr_user }}'
+    group: '{{ lidarr_group }}'
+    mode:  0750
+    state: 'directory'
+
+# tar preserves file permissions
+# Lidarr install has binaries as well, only overwrite.
+- name: 'restore | restore backup'
+  ansible.builtin.unarchive:
+    src:  '{{ lidarr_local_backup }}'
+    dest: '{{ lidarr_config }}'
+    extra_opts: '--strip-components=1'
+
+- name: 'restore | set ownership'
+  ansible.builtin.command: 'chown -R {{ lidarr_user }}:{{ lidarr_group }} {{ lidarr_config }}'
+  args:
+    warn: false
+  changed_when: false
+
+- name: 'restore | start lidarr'
+  ansible.builtin.service:
+    name:  'lidarr'
+    state: 'started'
+
+- name: 'restore | cleanup'
+  ansible.builtin.file:
+    path:  '{{ lidarr_staging }}'
+    state: 'absent'

@@ -1,0 +1,73 @@
+---
+###############################################################################
+# Default Lidarr Package Dependencies
+###############################################################################
+# Default required packages for lidarr install.
+
+lidarr_default_packages:
+  - 'mediainfo'
+  - 'curl'
+  - 'gnupg2'
+  - 'dirmngr'
+  - 'sqlite3'
+  - 'libchromaprint-tools'
+  - 'mono-runtime'
+
+###############################################################################
+# Default Lidarr User Group
+###############################################################################
+# Default group settings if an lidarr user is force created.
+
+lidarr_default_group:
+  name: 'media'
+  gid:  5555
+
+###############################################################################
+# Default Lidarr User Account
+###############################################################################
+# Default user settings if an lidarr user is force created.
+#
+# Logins are disabled.
+
+lidarr_default_user:
+  name:            'media'
+  group:           'media'
+  uid:             5555
+  shell:           '/usr/sbin/nologin'
+  home:            '/nonexistent'
+  create_home:     false
+  password:        '!'
+  password_lock:   true
+  update_password: 'always'
+  expires:         -1
+  system:          true
+
+###############################################################################
+# Lidarr Mono Version
+###############################################################################
+# Default Mono library to use if not in supported libraries.
+#
+# Reference:
+# * https://download.mono-project.com/repo/debian
+
+lidarr_default_mono_library: 'stable-buster'
+lidarr_mono_supported_libraries:
+  - 'bionic'
+  - 'buster'
+  - 'focal'
+  - 'jessie'
+  - 'precise'
+  - 'raspbianbuster'
+  - 'raspbianjessie'
+  - 'raspbianstretch'
+  - 'stretch'
+  - 'trusty'
+  - 'wheezy'
+  - 'xenial'
+
+###############################################################################
+# Lidarr Configuration Version
+###############################################################################
+# Base version used for initial role creation.
+
+lidarr_version: '0.8.1.2135'

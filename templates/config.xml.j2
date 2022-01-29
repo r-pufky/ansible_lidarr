@@ -1,0 +1,16 @@
+<Config>
+  <Port>{{ lidarr_port | default('8989') }}</Port>
+  <BindAddress>{{ lidarr_bind_address }}</BindAddress>
+  <SslPort>{{ lidarr_ssl_port | default('9898') }}</SslPort>
+  <EnableSsl>{{ lidarr_enable_ssl }}</EnableSsl>
+  <ApiKey>{{ lidarr_api_key }}</ApiKey>
+  <AuthenticationMethod>{{ lidarr_authentication_method }}</AuthenticationMethod>
+  <LogLevel>{{ lidarr_log_level }}</LogLevel>
+  <LaunchBrowser>{{ lidarr_launch_browser }}</LaunchBrowser>
+  <Branch>{{ lidarr_branch }}</Branch>
+  <SslCertHash>{{ lidarr_ssl_cert_hash }}</SslCertHash>
+  <UpdateMechanism>{{ lidarr_update_mechanism }}</UpdateMechanism>
+  <AnalyticsEnabled>{{ lidarr_analytics_enabled }}</AnalyticsEnabled>
+  <UpdateAutomatically>{{ lidarr_update_automatically }}</UpdateAutomatically>
+  <UrlBase>{{ lidarr_url_base }}</UrlBase>
+</Config>
