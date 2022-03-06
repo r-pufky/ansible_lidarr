@@ -27,9 +27,6 @@ lidarr_staging: '/var/lib/lidarr-staging'
 # Target location of backup file on ansible host.
 lidarr_local_backup: 'host_vars/data/lidarr-config.tar.gz'
 
-# Subdomain hint for lidarr service.
-lidarr_subdomain: 'lidarr'
-
 ###############################################################################
 # Lidarr config.xml Configuration
 ###############################################################################
