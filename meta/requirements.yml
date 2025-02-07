@@ -1,7 +1,5 @@
 ---
 collections:
-  # https://docs.ansible.com/ansible/latest/collections/community/general/
-  # archive
-  - community.general
+  - 'r_pufky.srv'  # https://github.com/r-pufky/ansible_collection_srv
 
 roles: []

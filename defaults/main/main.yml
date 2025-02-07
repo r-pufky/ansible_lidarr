@@ -1,48 +1,121 @@
 ---
+# yamllint disable rule:line-length
 ###############################################################################
 # Lidarr Role Configuration
 ###############################################################################
-# User that lidarr will run under. Assumes externally managed.
-lidarr_user:  'media'
+
+# Version.
+#
+# Older versions (<2) are not supported.
+#
+# Values:
+#   {VERSION}: tagged release to use ('v2.9.6.4552').
+#    'latest': use latest stable release.
+#
+# Default: 'latest'.
+lidarr_service_version: 'latest'
+
+# Remove old installs on upgrade success? Default: True.
+lidarr_service_delete_old_versions_enable: true
+
+# Absolute path to database and metadata location. Default: '/var/lib/lidarr'.
+lidarr_service_data_dir: '/var/lib/lidarr'
+
+# Service Umask. Default: '0002'.
+lidarr_service_u_mask: '0002'
+
+# Force overwrite existing install?
+#
+# DATA DESTRUCTIVE.
+#
+# Removes existing cached downloaded archives and existing same-version install
+# directories (if any). Any user data in these directories are DESTROYED.
+#
+# Default: False.
+lidarr_service_force_overwrite: false
+
+# Automatically restart Lidarr daily?
+#
+# Restarting the Lidarr service will automatically apply any downloaded auto
+# updates.
+#
+# Default: True.
+lidarr_service_restart_daily_enable: true
+
+# Only apply configuration?
+#
+# Reduces role application time by ONLY applying configuration changes. Does
+# NOT affect lidarr_media_set_perms_file_enable.
+#
+# This should ONLY be used after the role has been fully run once.
+#
+# Useful when adding a change without reconfiguring the whole system or
+# checking and installing a new version. Suggest applying with extra options:
+#
+#   ansible-playbook site.yml --tags Lidarr -e 'lidarr_service_force_config_only_enable=true'
+#
+# Default: False.
+lidarr_service_force_config_only_enable: false
+
+###############################################################################
+# Lidarr User
+###############################################################################
+
+# User that Lidarr will run under.
+#
+# Enable lidarr_create_user if this account is not externally managed.
+#
+# Default: 'media'.
+lidarr_user: 'media'
+
+# Group that Lidarr will run under.
+#
+# Enable lidarr_create_user if this group is not externally managed.
+#
+# Default: 'media'.
 lidarr_group: 'media'
 
-# Create 'media' user if not detected? See: vars/main.yml.
-lidarr_create_user: false
-
-# Generic architecture for platform: x64, arm, arm64
-lidarr_arch_generic: 'x64'
-
-# C architecture for platform: linux, linuxmusl
-lidarr_arch_c: 'linux'
-
-# Installation directory
-lidarr_dir: '/var/lib/lidarr'
-
-# Configuration directory
-lidarr_config: '/var/lib/lidarr-config'
-
-# Staging directory for backups
-lidarr_staging: '/var/lib/lidarr-staging'
-
-# Target location of backup file on ansible host.
-lidarr_local_backup: 'host_vars/data/lidarr-config.tar.gz'
+# Create lidarr_user, lidarr_group if not detected?
+#
+# Applied via r_pufky.srv.users, see vars/main.yml for default user attributes.
+#
+# Default: True.
+lidarr_create_user: true
 
 ###############################################################################
-# Lidarr config.xml Configuration
+# Media Permissions
 ###############################################################################
 
-lidarr_port:                  '8686' # http port
-lidarr_bind_address:          '*'
-# Lidarr requires ssl port to be defined even if unused
-lidarr_ssl_port:              '6868' # https port
-lidarr_enable_ssl:            false
-lidarr_api_key:               ''
-lidarr_authentication_method: 'None'
-lidarr_log_level:             'info'
-lidarr_launch_browser:        false # Default: undefined
-lidarr_branch:                'master'
-lidarr_ssl_cert_hash:         ''
-lidarr_update_mechanism:      'BuiltIn'
-lidarr_analytics_enabled:     false # Default: undefined
-lidarr_update_automatically:  false # Default: undefined
-lidarr_url_base:              ''
+# Root media storage folders.
+#
+# Folders will be created/set with lidarr_user, lidarr_group,
+# lidarr_media_perms_folder.
+#
+# Default: [].
+lidarr_media_root_folders: []
+
+# Media folder permissions octal.
+#
+# Media folders specified by lidarr_media_root_folders will always be
+# recursively set using lidarr_media_perms_folder, lidarr_user, and
+# lidarr_group.
+#
+# Default: '0755'.
+lidarr_media_perms_folder: '0755'
+
+# Enable setting of media file permissions?
+#
+# Set file permissions within lidarr_media_root_folders using
+# lidarr_media_perms_file, lidarr_user, and lidarr_group. Large sets of files
+# may be slow to set permissions.
+#
+# Useful when first configuring to ensure service has access to all specified
+# media locations. Suggest applying with extra options:
+#
+#   ansible-playbook site.yml --tags Lidarr -e 'lidarr_media_set_perms_file_enable=true'
+#
+# Default: False.
+lidarr_media_set_perms_file_enable: false
+
+# Media file permissions octal. Default: '0644'.
+lidarr_media_perms_file: '0644'

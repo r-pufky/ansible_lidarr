@@ -3,12 +3,8 @@
 # Lidarr handlers
 ###############################################################################
 
-- name: 'reload systemd'
+- name: 'Handlers | restart lidarr'
   ansible.builtin.systemd:
-    daemon-reload: true
-
-- name: 'restart lidarr'
-  ansible.builtin.systemd:
-    name:    'lidarr'
+    name: 'lidarr'
     enabled: true
-    state:   'restarted'
+    state: 'restarted'

@@ -1,0 +1,42 @@
+---
+# yamllint disable rule:line-length
+###############################################################################
+# Lidarr Install
+###############################################################################
+# Install specified version from github release.
+
+- name: 'Install | packages'
+  ansible.builtin.include_role:
+    name: 'r_pufky.srv.apt'
+  vars:
+    apt_packages:
+      - '{{ lidarr_role_packages }}'
+    apt_package_update_cache: true
+
+- name: 'Install | Lidarr package {{ lidarr_service_version }}'
+  when: not lidarr_service_force_config_only_enable
+  ansible.builtin.include_role:
+    name: 'r_pufky.srv.github'
+  vars:
+    github_repo_owner: '{{ lidarr_role_github_owner }}'
+    github_repo_repo: '{{ lidarr_role_github_repo }}'
+    github_repo_release: '{{ lidarr_service_version }}'
+    github_repo_archive_type: '{{ lidarr_role_github_repo_archive_type }}'
+    github_binary_enable: true
+    github_binary_specifier: '{{ lidarr_role_github_binary_specifier }}'
+    github_binary_url: '{{ lidarr_role_github_binary_url }}'
+    github_file_owner: '{{ lidarr_user }}'
+    github_file_group: '{{ lidarr_group }}'
+    github_extract_dest: '{{ lidarr_role_github_extract_dest }}'
+    github_extract_symlink_target: '{{ lidarr_role_github_extract_symlink_target }}'
+    github_extract_migrate_files:
+      - 'lidarr.db'
+      - 'lidarr.db-shm'  # Lidarr never closes DB's correctly.
+      - 'lidarr.db-wal'
+      - 'logs.db'
+      - 'logs.db-shm'
+      - 'logs.db-wal'
+    github_extract_delete_old_versions: '{{ lidarr_service_delete_old_versions_enable }}'
+    github_force_overwrite: '{{ lidarr_service_force_overwrite }}'
+    github_extract_mode: 'a-st,o-rwx'
+    github_extract_extra_opts: '--strip-components=1'

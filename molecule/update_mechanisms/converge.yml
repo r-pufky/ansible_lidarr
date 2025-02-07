@@ -1,0 +1,19 @@
+---
+# yamllint disable rule:line-length
+- name: 'Update mechanism | converge'
+  hosts: 'all'
+  gather_facts: false
+  tasks:
+    - name: 'Update mechanism | converge | apply r_pufky.srv.lidarr'
+      ansible.builtin.include_role:
+        name: 'r_pufky.srv.lidarr'
+
+- name: 'Update mechanism | converge | toggle updates'
+  hosts: 'lidarr-debian-12-update_mechanisms-toggle'
+  gather_facts: false
+  tasks:
+    - name: 'Update mechanism | converge | toggle updates | apply r_pufky.srv.lidarr'
+      ansible.builtin.include_role:
+        name: 'r_pufky.srv.lidarr'
+      vars:
+        lidarr_config_update_mechanism: true

@@ -1,0 +1,131 @@
+---
+# yamllint disable rule:line-length
+###############################################################################
+# Lidarr Config
+###############################################################################
+# Lidarr is installed from source. Create systemd service and reload daemons,
+# create required directories, certificates, set config, and start service.
+# Service may not exist if first install.
+#
+# New config.xml options must be manually added to the template.
+#
+# Args:
+#   _lidarr_uid: int - lidarr user UID.
+#   _lidarr_gid: int - lidarr user GID.
+#
+# Reference:
+# * https://github.com/Servarr/Wiki/blob/master/servarr/servarr-install-script.sh
+
+- name: 'Config | Lidarr service'
+  ansible.builtin.include_role:
+    name: 'r_pufky.srv.systemd'
+  vars:
+    systemd_daemon_reload_enable: true
+    systemd_services:
+      - name: 'lidarr'
+        state: 'present'
+        drop_in: false
+        unit:
+          description: 'Lidarr Daemon'
+          after:
+            - 'syslog.target'
+            - 'network.target'
+        service:
+          type: 'simple'
+          exec_start: ['{{ lidarr_role_github_extract_symlink_target }}/Lidarr -nobrowser -data={{ lidarr_service_data_dir }}']
+          timeout_stop_sec: 20
+          restart: 'always'  # always restart for periodic service restarts
+          runtime_max_sec: '{{ "1d" if lidarr_service_restart_daily_enable else "infinity" }}'
+        exec:
+          user: '{{ lidarr_user }}'
+          group: '{{ lidarr_group }}'
+          u_mask: '{{ lidarr_service_u_mask }}'
+        kill:
+          kill_mode: 'process'
+        install:
+          wanted_by:
+            - 'multi-user.target'
+
+- name: 'Config | stop Lidarr'
+  ansible.builtin.service:
+    name: 'lidarr'
+    state: 'stopped'
+
+- name: 'Prep | set {{ lidarr_service_data_dir }}'
+  ansible.builtin.file:
+    path: '{{ lidarr_service_data_dir }}'
+    owner: '{{ lidarr_user }}'
+    group: '{{ lidarr_group }}'
+    mode: '0775'
+    recurse: true
+    state: 'directory'
+  become: true
+
+- name: 'Prep | set {{ lidarr_service_data_dir }}/lidarr.pfx'  # noqa name[template] full path
+  when: lidarr_config_enable_ssl
+  ansible.builtin.copy:
+    src: '{{ lidarr_config_ssl_cert_path }}'
+    dest: '{{ lidarr_service_data_dir }}/lidarr.pfx'
+    owner: '{{ lidarr_user }}'
+    group: '{{ lidarr_group }}'
+    mode: '0640'
+    force: true
+
+- name: 'Prep | remove {{ lidarr_service_data_dir }}/lidarr.pfx'  # noqa name[template] full path
+  when: not lidarr_config_enable_ssl
+  ansible.builtin.file:
+    dest: '{{ lidarr_service_data_dir }}/lidarr.pfx'
+    state: 'absent'
+
+- name: 'Prep | set {{ lidarr_service_data_dir }}/update_script'  # noqa name[template] full path
+  when: not lidarr_config_update_mechanism
+  ansible.builtin.copy:
+    src: '{{ lidarr_config_update_script_path }}'
+    dest: '{{ lidarr_service_data_dir }}/update_script'
+    owner: '{{ lidarr_user }}'
+    group: '{{ lidarr_group }}'
+    mode: '0750'
+    force: true
+
+- name: 'Prep | remove {{ lidarr_service_data_dir }}/update_script'  # noqa name[template] full path
+  when: lidarr_config_update_mechanism
+  ansible.builtin.file:
+    dest: '{{ lidarr_service_data_dir }}/update_script'
+    state: 'absent'
+
+# Use UID/GID as some media filesystems may be remote.
+- name: 'Prep | set media root folders'
+  ansible.builtin.file:
+    path: '{{ item }}'
+    owner: '{{ _lidarr_uid }}'
+    group: '{{ _lidarr_gid }}'
+    mode: '{{ lidarr_media_perms_folder }}'
+    recurse: true
+    state: 'directory'
+  become: true
+  loop: '{{ lidarr_media_root_folders }}'
+
+# Use UID/GID as some media filesystems may be remote.
+- name: 'Prep | set media root files'
+  when: lidarr_media_set_perms_file_enable
+  ansible.builtin.shell: |
+    find '{{ item }}' -type f -exec chmod {{ lidarr_media_perms_file }} {}; chown {{ _lidarr_uid }}:{{ _lidarr_gid }} {} \;
+  changed_when: false
+  loop: '{{ lidarr_media_root_folders }}'
+
+# Writing the configuration back requires to_json, ansible.utils.to_xml, and
+# xmltodict python3 package installed on both controller and node. Just use a
+# template instead.
+- name: 'Config | set Lidarr configuration'
+  ansible.builtin.template:
+    src: 'config.xml.j2'
+    dest: '{{ lidarr_service_data_dir }}/config.xml'
+    owner: '{{ lidarr_user }}'
+    group: '{{ lidarr_group }}'
+    mode: '0600'
+  notify: 'Handlers | restart lidarr'
+
+- name: 'Config | start Lidarr'
+  ansible.builtin.service:
+    name: 'lidarr'
+    state: 'started'

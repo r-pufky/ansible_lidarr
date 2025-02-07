@@ -1,0 +1,94 @@
+---
+# yamllint disable rule:line-length
+###############################################################################
+# Lidarr Prep
+###############################################################################
+# Prep Lidarr variables for installation and upgrade. *arr services use the
+# same codebase; any bugs or fixes should be checked for all related services.
+#
+# Generates:
+#   _lidarr_uid: int - lidarr user UID.
+#   _lidarr_gid: int - lidarr user GID.
+#
+# Reference:
+# * https://lidarr.audio/
+# * https://wiki.servarr.com/lidarr
+# * https://github.com/Lidarr/Lidarr/releases
+# * https://github.com/Servarr/Wiki/blob/master/servarr/servarr-install-script.sh
+
+- name: 'Prep | assert SSL requirements'
+  when: lidarr_config_enable_ssl
+  ansible.builtin.assert:
+    that:
+      - lidarr_config_ssl_cert_path | length > 0
+    fail_msg: >
+      lidarr_config_enable_ssl=true requires
+      lidarr_config_ssl_cert_path set.
+
+- name: 'Prep | assert update script requirements'
+  when: not lidarr_config_update_mechanism
+  ansible.builtin.assert:
+    that:
+      - lidarr_config_update_script_path | length > 0
+    fail_msg: >
+      lidarr_config_update_script_path must be set when
+      lidarr_config_update_mechanism=False.
+
+- name: 'Prep | manage users'
+  when: lidarr_create_user
+  ansible.builtin.include_role:
+    name: 'r_pufky.srv.users'
+    tasks_from: 'role_account_add.yml'
+  vars:
+    users_role_group: '{{ lidarr_role_group }}'
+    users_role_user: '{{ lidarr_role_user }}'
+
+- name: 'Prep | enumerate system user {{ lidarr_user }}'
+  ansible.builtin.user:
+    name: '{{ lidarr_user }}'
+  check_mode: true
+  changed_when: false
+  register: _lidarr_user_query
+
+- name: 'Prep | parse system user UID/GID'
+  ansible.builtin.set_fact:
+    _lidarr_uid: '{{ _lidarr_user_query.uid }}'
+    _lidarr_gid: '{{ _lidarr_user_query.group }}'
+
+# Lidarr does not consistently apply casing to XML settings and are frequently
+# mis-spelled, inconsistently spelled, ordered, or strings used for boolean
+# values; so we have to explicitly map those settings to the equivalent role
+# settings. Order does not matter but will change based on WebUI usage and what
+# values were changed last. This can lead to 'changed' configurations when no
+# values were actually changed.
+- name: 'Prep | build base config'
+  ansible.builtin.set_fact:
+    _lidarr_config: {
+      # General
+      BindAddress: '{{ lidarr_config_bind_address | default("*") }}',
+      Port: '{{ lidarr_config_port | default(8686) }}',
+      UrlBase: '{{ lidarr_config_url_base | default("") }}',
+      InstanceName: '{{ lidarr_config_instance_name | default("Lidarr") }}',
+      EnableSsl: '{{ lidarr_config_enable_ssl | default(false) | bool | string | capitalize }}',
+      SslPort: '{{ lidarr_config_ssl_port | default(6868) }}',
+      SslCertPath: '{{ "{{ lidarr_service_data_dir }}/lidarr.pfx" if lidarr_config_enable_ssl | default(false) else "" }}',  # static placement; var determines controller source.
+      SslCertPassword: '{{ lidarr_config_ssl_cert_password | default("") }}',
+      AuthenticationMethod: '{{ lidarr_config_authentication_method | default("Forms") | capitalize }}',
+      AuthenticationRequired: '{{ "Enabled" if lidarr_config_authentication_required | default(false) else "DisabledForLocalAddresses" }}',
+      ApiKey: '{{ lidarr_config_api_key | default(inventory_hostname | md5 | truncate(32, true, "")) }}',
+      LogLevel: '{{ lidarr_config_log_level | default("info") | lower }}',
+      LogSizeLimit: '{{ lidarr_config_log_size_limit | default(1) }}',
+      AnalyticsEnabled: '{{ lidarr_config_analytics_enabled | default(false) | bool | string | capitalize }}',
+      Branch: '{{ lidarr_config_branch | default("master") | lower }}',
+      UpdateAutomatically: '{{  lidarr_config_update_automatically | default(false) | bool | string | capitalize }}',
+      UpdateMechanism: '{{ "BuiltIn" if lidarr_config_update_mechanism | default(true) else "Script" }}',
+      UpdateScriptPath: '{{ "{{ lidarr_service_data_dir }}/update_script" if not lidarr_config_update_mechanism | default(true) else "" }}',  # static placement; var determines controller source.
+      LaunchBrowser: '{{ lidarr_config_launch_browser | default(false) | bool | string | capitalize }}',
+      # Settings > UI > Style
+      Theme: '{{ lidarr_config_theme | default("auto") | lower }}',
+    }
+
+- name: 'Prep | add config extensions'
+  when: lidarr_config_extensions | length > 0
+  ansible.builtin.set_fact:
+    _lidarr_config: '{{ _lidarr_config | combine(lidarr_config_extensions, recursive=true) }}'

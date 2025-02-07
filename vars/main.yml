@@ -1,73 +1,69 @@
 ---
+# yamllint disable rule:line-length
 ###############################################################################
-# Default Lidarr Package Dependencies
+# Lidarr Role Options
 ###############################################################################
-# Default required packages for lidarr install.
-
-lidarr_default_packages:
-  - 'mediainfo'
-  - 'curl'
-  - 'gnupg2'
-  - 'dirmngr'
-  - 'sqlite3'
-  - 'libchromaprint-tools'
-  - 'mono-runtime'
-
-###############################################################################
-# Default Lidarr User Group
-###############################################################################
-# Default group settings if an lidarr user is force created.
-
-lidarr_default_group:
-  name: 'media'
-  gid:  5555
-
-###############################################################################
-# Default Lidarr User Account
-###############################################################################
-# Default user settings if an lidarr user is force created.
+# Base version used for current role creation. Lidarr will auto update once
+# properly installed; revisiting role tasks is not necessary unless a major
+# version is released. Additional configuration settings may need to be added
+# to defaults for point releases.
 #
-# Logins are disabled.
-
-lidarr_default_user:
-  name:            'media'
-  group:           'media'
-  uid:             5555
-  shell:           '/usr/sbin/nologin'
-  home:            '/nonexistent'
-  create_home:     false
-  password:        '!'
-  password_lock:   true
-  update_password: 'always'
-  expires:         -1
-  system:          true
-
-###############################################################################
-# Lidarr Mono Version
-###############################################################################
-# Default Mono library to use if not in supported libraries.
+# Lidarr uses the generic Servarr installation scripts.
 #
 # Reference:
-# * https://download.mono-project.com/repo/debian
+# * https://github.com/Servarr/Wiki/blob/master/servarr/servarr-install-script.sh
+# * https://github.com/Lidarr/Lidarr/releases
 
-lidarr_default_mono_library: 'stable-buster'
-lidarr_mono_supported_libraries:
-  - 'bionic'
-  - 'buster'
-  - 'focal'
-  - 'jessie'
-  - 'precise'
-  - 'raspbianbuster'
-  - 'raspbianjessie'
-  - 'raspbianstretch'
-  - 'stretch'
-  - 'trusty'
-  - 'wheezy'
-  - 'xenial'
+# Last time Lidarr options were validated against a default configuration.
+lidarr_role_validate_date: '2025-02-05'
+lidarr_role_validate_release: 'bookworm'
+lidarr_role_validate_version: 'v2.9.6.4552'
+lidarr_role_validate_script_release: '3.0.12'
+lidarr_role_validate_script_date: '2024-04-09'
 
 ###############################################################################
-# Lidarr Configuration Version
+# APT Packages
 ###############################################################################
-# Base version used for initial role creation.
 
-lidarr_version: '0.8.1.2135'
+lidarr_role_packages:
+  - 'sqlite3'  # Lidarr DB.
+  - 'libchromaprint-tools'  # audio fingerprinting.
+  - 'mediainfo'  # audio file analysis.
+  - 'gnupg2'  # GPG for certificates.
+  - 'ca-certificates'  # up to date certificates for certificate validation.
+  - 'libicu72'  # International Unicode support for .NET.
+
+###############################################################################
+# Lidarr GitHub Options
+###############################################################################
+# Reference:
+# * https://github.com/Lidarr/Lidarr/releases/latest
+
+lidarr_role_github_owner: 'Lidarr'
+lidarr_role_github_repo: 'Lidarr'
+lidarr_role_github_repo_archive_type: 'tar.gz'
+lidarr_role_github_extract_dest: '/opt/lidarr'
+lidarr_role_github_extract_symlink_target: '/opt/lidarr/lidarr'
+lidarr_role_github_binary_specifier: 'v'
+lidarr_role_github_binary_url: '{VERSION}/Lidarr.master.{BARE_VERSION}.linux-core-x64.tar.gz'
+
+###############################################################################
+# Default Lidarr User/Group
+###############################################################################
+
+lidarr_role_group:
+  name: 'media'
+  gid: 5555
+
+lidarr_role_user:
+  name: 'media'
+  group: 'media'
+  uid: 5555
+  shell: '/usr/sbin/nologin'
+  home: '/nonexistent'
+  create_home: false
+  password: '!'
+  password_lock: true
+  update_password: 'always'
+  expires: -1
+  system: true
