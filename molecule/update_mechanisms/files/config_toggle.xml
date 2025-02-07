@@ -1,0 +1,22 @@
+<Config>
+  <BindAddress>*</BindAddress>
+  <Port>8686</Port>
+  <UrlBase></UrlBase>
+  <InstanceName>Lidarr</InstanceName>
+  <EnableSsl>False</EnableSsl>
+  <SslPort>6868</SslPort>
+  <SslCertPath></SslCertPath>
+  <SslCertPassword></SslCertPassword>
+  <AuthenticationMethod>Forms</AuthenticationMethod>
+  <AuthenticationRequired>DisabledForLocalAddresses</AuthenticationRequired>
+  <ApiKey>abcdef1234567890abcdef1234567890</ApiKey>
+  <LogLevel>info</LogLevel>
+  <LogSizeLimit>1</LogSizeLimit>
+  <AnalyticsEnabled>False</AnalyticsEnabled>
+  <Branch>master</Branch>
+  <UpdateAutomatically>False</UpdateAutomatically>
+  <UpdateMechanism>BuiltIn</UpdateMechanism>
+  <UpdateScriptPath></UpdateScriptPath>
+  <LaunchBrowser>False</LaunchBrowser>
+  <Theme>auto</Theme>
+</Config>

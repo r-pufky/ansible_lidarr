@@ -1,0 +1,62 @@
+---
+# yamllint disable rule:line-length
+# Confirm:
+# * /var/lib/lidarr/update_script exists.
+# * toggling script update on, then off removes update_script.
+dependency:
+  name: 'galaxy'
+driver:
+  name: 'podman'
+provisioner:
+  name: 'ansible'
+  config_options:
+    defaults:
+      interpreter_python: 'auto_silent'
+      callback_whitelist: 'profile_tasks, timer, yaml'
+    ssh_connection:
+      pipelining: false
+  inventory:
+    group_vars:
+      all:
+        lidarr_config_update_mechanism: false
+        lidarr_config_update_script_path: 'files/update.sh'
+        lidarr_media_root_folders: ['/data/media']
+        lidarr_config_api_key: 'abcdef1234567890abcdef1234567890'
+        github_testing_enable: true
+        github_testing_version: 'v4.0.12.2823'
+        github_testing_archive: '{{ lookup("env", "MOLECULE_PROJECT_DIRECTORY") }}/molecule/files/Lidarr.master.2.9.6.4552.linux-core-x64.tar.gz'
+platforms:
+  - name: 'lidarr-debian-12-update_mechanisms'
+    image: 'ghcr.io/hifis-net/debian-systemd:12'
+    systemd: 'always'
+    volumes:
+      - '/sys/fs/cgroup:/sys/fs/cgroup:ro'
+    command: '/lib/systemd/systemd'
+    pre_build_image: true
+  - name: 'lidarr-debian-12-update_mechanisms-toggle'
+    image: 'ghcr.io/hifis-net/debian-systemd:12'
+    systemd: 'always'
+    volumes:
+      - '/sys/fs/cgroup:/sys/fs/cgroup:ro'
+    command: '/lib/systemd/systemd'
+    pre_build_image: true
+verifier:
+  name: 'ansible'
+lint: |
+  set -e
+  yamllint .
+  ansible-lint .
+scenario:
+  test_sequence:
+    # - 'dependency'
+    # - 'cleanup'
+    - 'destroy'
+    - 'syntax'
+    - 'create'
+    # - 'prepare'
+    - 'converge'
+    # - 'idempotence'  # Files created, extracted, created, deleted.
+    # - 'side_effect'
+    - 'verify'
+    # - 'cleanup'
+    - 'destroy'

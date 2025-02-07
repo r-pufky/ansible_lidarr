@@ -1,0 +1,81 @@
+---
+# yamllint disable rule:line-length
+#
+# Testing requires a valid PFX certificate. This has been created and is valid
+# for 10 years (all default values, password: 'test'):
+#
+# * openssl req -new -newkey rsa:4096 -nodes -keyout test.key -out test.csr
+# * openssl x509 -req -sha256 -days 3650 -in test.csr -signkey test.key -out test.pem
+# * openssl pkcs12 -export -in test.pem -inkey test.key -out test.pfx
+#
+# Place in files/test.pfx
+#
+# Reference:
+# * https://gist.github.com/rquackenbush/53ff432567699b21c86f3360fb4ec7f0
+#
+# Confirm:
+# * /var/lib/lidarr/lidarr.pfx exists.
+# * toggling ssl on, then off removes lidarr.pfx.
+
+#  <EnableSsl>False</EnableSsl>  # true requires ssl_cert
+#  <SslCertPath>/var/lib/lidarr/snakeoil.pfx</SslCertPath>
+#  <SslCertPassword>testing</SslCertPassword>  # stored plaintext.
+# lidarr_config_enable_ssl -- test when false w and w/o cert
+dependency:
+  name: 'galaxy'
+driver:
+  name: 'podman'
+provisioner:
+  name: 'ansible'
+  config_options:
+    defaults:
+      interpreter_python: 'auto_silent'
+      callback_whitelist: 'profile_tasks, timer, yaml'
+    ssh_connection:
+      pipelining: false
+  inventory:
+    group_vars:
+      all:
+        lidarr_config_enable_ssl: true
+        lidarr_config_ssl_cert_path: 'files/test.pfx'
+        lidarr_config_ssl_cert_password: 'test'
+        lidarr_media_root_folders: ['/data/media']
+        lidarr_config_api_key: 'abcdef1234567890abcdef1234567890'
+        github_testing_enable: true
+        github_testing_version: 'v4.0.12.2823'
+        github_testing_archive: '{{ lookup("env", "MOLECULE_PROJECT_DIRECTORY") }}/molecule/files/Lidarr.master.2.9.6.4552.linux-core-x64.tar.gz'
+platforms:
+  - name: 'lidarr-debian-12-enable_ssl'
+    image: 'ghcr.io/hifis-net/debian-systemd:12'
+    systemd: 'always'
+    volumes:
+      - '/sys/fs/cgroup:/sys/fs/cgroup:ro'
+    command: '/lib/systemd/systemd'
+    pre_build_image: true
+  - name: 'lidarr-debian-12-enable_ssl-toggle'
+    image: 'ghcr.io/hifis-net/debian-systemd:12'
+    systemd: 'always'
+    volumes:
+      - '/sys/fs/cgroup:/sys/fs/cgroup:ro'
+    command: '/lib/systemd/systemd'
+    pre_build_image: true
+verifier:
+  name: 'ansible'
+lint: |
+  set -e
+  yamllint .
+  ansible-lint .
+scenario:
+  test_sequence:
+    # - 'dependency'
+    # - 'cleanup'
+    - 'destroy'
+    - 'syntax'
+    - 'create'
+    # - 'prepare'
+    - 'converge'
+    # - 'idempotence'  # Files created, extracted, created, deleted.
+    # - 'side_effect'
+    - 'verify'
+    # - 'cleanup'
+    - 'destroy'
