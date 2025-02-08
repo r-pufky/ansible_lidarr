@@ -90,7 +90,7 @@ lidarr_config_authentication_required: false
 # Special Case:
 #   '': random 32 character alphanumeric hash
 #
-# Default: '' (insecure idempotent API key based on hostname).
+# Default: '{RANDOM}' (insecure idempotent API key based on hostname).
 lidarr_config_api_key: '{{ inventory_hostname | md5 | truncate(32, true, "") }}'
 
 ###############################################################################
