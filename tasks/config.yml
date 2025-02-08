@@ -117,13 +117,13 @@
 # xmltodict python3 package installed on both controller and node. Just use a
 # template instead.
 - name: 'Config | set Lidarr configuration'
+  notify: 'Handlers | restart lidarr'
   ansible.builtin.template:
     src: 'config.xml.j2'
     dest: '{{ lidarr_service_data_dir }}/config.xml'
     owner: '{{ lidarr_user }}'
     group: '{{ lidarr_group }}'
     mode: '0600'
-  notify: 'Handlers | restart lidarr'
 
 - name: 'Config | start Lidarr'
   ansible.builtin.service:
