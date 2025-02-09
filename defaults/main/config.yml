@@ -7,7 +7,7 @@
 # Additional settings are stored in the DB. WebUI locations are headers but all
 # values are stored within config.xml.
 #
-# Lidarr uses PascalCase; equivalent variable is lidarr_config_pascal_case.
+# PascalCase: lidarr_config_bind_address > BindAddress.
 #
 # Documented usage here reflect code, installer, and WebUI analysis. These may
 # change over time and should be re-validated from time to time.
