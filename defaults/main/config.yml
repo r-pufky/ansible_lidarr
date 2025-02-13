@@ -41,7 +41,7 @@ lidarr_config_enable_ssl: false
 # HTTPS port. Default: 6868.
 lidarr_config_ssl_port: 6868
 
-# Absolute path to PFX certificate.
+# Path to PFX certificate.
 #
 # Sourced from ansible controller; automatically placed in
 # lidarr_service_data_dir/lidarr.pfx with correct permissions. Lidarr will be
