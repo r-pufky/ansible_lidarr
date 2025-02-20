@@ -9,6 +9,7 @@
 # Generates:
 #   _lidarr_uid: int - lidarr user UID.
 #   _lidarr_gid: int - lidarr user GID.
+#   _lidarr_migrate_metadata: list of str - files and directories to migrate.
 #
 # Reference:
 # * https://lidarr.audio/
@@ -73,6 +74,8 @@
       SslPort: '{{ lidarr_config_ssl_port | default(6868) }}',
       SslCertPath: '{{ "{{ lidarr_service_data_dir }}/lidarr.pfx" if lidarr_config_enable_ssl | default(false) else "" }}',  # static placement; var determines controller source.
       SslCertPassword: '{{ lidarr_config_ssl_cert_password | default("") }}',
+      # TODO(V4): lidarr_config_authentication_method switches from 'none' to
+      #     'eternal' on V4 codebase sync.
       AuthenticationMethod: '{{ lidarr_config_authentication_method | default("Forms") | capitalize }}',
       AuthenticationRequired: '{{ "Enabled" if lidarr_config_authentication_required | default(false) else "DisabledForLocalAddresses" }}',
       ApiKey: '{{ lidarr_config_api_key | default(inventory_hostname | md5 | truncate(32, true, "")) }}',
@@ -87,6 +90,7 @@
       # Settings > UI > Style
       Theme: '{{ lidarr_config_theme | default("auto") | lower }}',
     }
+    _lidarr_migrate_metadata: '{{ lidarr_role_github_extract_migrate_files if not lidarr_service_migrate_metadata else lidarr_role_github_extract_migrate_files + ["MediaCover"] }}'
 
 - name: 'Prep | add config extensions'
   when: lidarr_config_extensions | length > 0
