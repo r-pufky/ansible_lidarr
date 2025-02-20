@@ -40,6 +40,15 @@ permissions will be set to ensure Lidarr can read files.
     lidarr_media_set_perms_file_enable: true
 ```
 
+### Initial Deployment with No User
+New installs REQUIRE 'none' to create a login user; authentication can be
+toggled on after the user exists in the database . Suggest running initial role
+application temporarily disabling this option:
+
+``` bash
+ansible-playbook lidarr.yml -e 'lidarr_config_authentication_method=none'
+```
+
 ## Development
 Configure [environment](https://github.com/r-pufky/ansible_collection_srv/blob/main/docs/dev/environment/README.md)
 

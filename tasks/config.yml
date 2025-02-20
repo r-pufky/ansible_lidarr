@@ -51,17 +51,17 @@
     name: 'lidarr'
     state: 'stopped'
 
-- name: 'Prep | set {{ lidarr_service_data_dir }}'
+- name: 'Config | set {{ lidarr_service_data_dir }}'
   ansible.builtin.file:
     path: '{{ lidarr_service_data_dir }}'
     owner: '{{ lidarr_user }}'
     group: '{{ lidarr_group }}'
     mode: '0775'
-    recurse: true
+    recurse: '{{ lidarr_service_permissions_recursive_enable }}'
     state: 'directory'
   become: true
 
-- name: 'Prep | set {{ lidarr_service_data_dir }}/lidarr.pfx'  # noqa name[template] full path
+- name: 'Config | set {{ lidarr_service_data_dir }}/lidarr.pfx'  # noqa name[template] full path
   when: lidarr_config_enable_ssl
   ansible.builtin.copy:
     src: '{{ lidarr_config_ssl_cert_path }}'
@@ -71,13 +71,13 @@
     mode: '0640'
     force: true
 
-- name: 'Prep | remove {{ lidarr_service_data_dir }}/lidarr.pfx'  # noqa name[template] full path
+- name: 'Config | remove {{ lidarr_service_data_dir }}/lidarr.pfx'  # noqa name[template] full path
   when: not lidarr_config_enable_ssl
   ansible.builtin.file:
     dest: '{{ lidarr_service_data_dir }}/lidarr.pfx'
     state: 'absent'
 
-- name: 'Prep | set {{ lidarr_service_data_dir }}/update_script'  # noqa name[template] full path
+- name: 'Config | set {{ lidarr_service_data_dir }}/update_script'  # noqa name[template] full path
   when: not lidarr_config_update_mechanism
   ansible.builtin.copy:
     src: '{{ lidarr_config_update_script_path }}'
@@ -87,14 +87,14 @@
     mode: '0750'
     force: true
 
-- name: 'Prep | remove {{ lidarr_service_data_dir }}/update_script'  # noqa name[template] full path
+- name: 'Config | remove {{ lidarr_service_data_dir }}/update_script'  # noqa name[template] full path
   when: lidarr_config_update_mechanism
   ansible.builtin.file:
     dest: '{{ lidarr_service_data_dir }}/update_script'
     state: 'absent'
 
 # Use UID/GID as some media filesystems may be remote.
-- name: 'Prep | set media root folders'
+- name: 'Config | set media root folders'
   ansible.builtin.file:
     path: '{{ item }}'
     owner: '{{ _lidarr_uid }}'
@@ -106,7 +106,7 @@
   loop: '{{ lidarr_media_root_folders }}'
 
 # Use UID/GID as some media filesystems may be remote.
-- name: 'Prep | set media root files'
+- name: 'Config | set media root files'
   when: lidarr_media_set_perms_file_enable
   ansible.builtin.shell: |
     find '{{ item }}' -type f -exec chmod {{ lidarr_media_perms_file }} {}; chown {{ _lidarr_uid }}:{{ _lidarr_gid }} {} \;

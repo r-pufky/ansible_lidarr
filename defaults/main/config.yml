@@ -65,6 +65,13 @@ lidarr_config_ssl_cert_password: ''
 
 # Authentication method for user access.
 #
+# Special Case:
+#   * New installs REQUIRE 'none' to create a login user; authentication can be
+#     toggled on after the user exists in the database . Suggest running
+#     initial role application temporarily disabling this option:
+#
+#     ansible-playbook lidarr.yml -e 'lidarr_config_authentication_method=none'
+#
 # Values:
 #       none: force user creation and auth selection WebUI (first run only).
 #             basic or forms must be used after first run.
@@ -72,6 +79,9 @@ lidarr_config_ssl_cert_password: ''
 #      forms: login page for credentials (use for password managers) (default).
 #
 # Default: 'forms'.
+#
+# Reference:
+# * https://wiki.servarr.com/lidarr/faq#help-i-have-locked-myself-out
 lidarr_config_authentication_method: 'forms'
 
 # Require authentication for all addresses?

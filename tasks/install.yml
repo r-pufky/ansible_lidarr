@@ -4,6 +4,9 @@
 # Lidarr Install
 ###############################################################################
 # Install specified version from github release.
+#
+# Args:
+#   _lidarr_migrate_metadata: list of str - files and directories to migrate.
 
 - name: 'Install | packages'
   ansible.builtin.include_role:
@@ -29,13 +32,7 @@
     github_file_group: '{{ lidarr_group }}'
     github_extract_dest: '{{ lidarr_role_github_extract_dest }}'
     github_extract_symlink_target: '{{ lidarr_role_github_extract_symlink_target }}'
-    github_extract_migrate_files:
-      - 'lidarr.db'
-      - 'lidarr.db-shm'  # Lidarr never closes DB's correctly.
-      - 'lidarr.db-wal'
-      - 'logs.db'
-      - 'logs.db-shm'
-      - 'logs.db-wal'
+    github_extract_migrate_files: '{{ _lidarr_migrate_metadata }}'
     github_extract_delete_old_versions: '{{ lidarr_service_delete_old_versions_enable }}'
     github_force_overwrite: '{{ lidarr_service_force_overwrite }}'
     github_extract_mode: 'a-st,o-rwx'
