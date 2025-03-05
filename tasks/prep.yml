@@ -20,6 +20,7 @@
 - name: 'Prep | assert SSL requirements'
   when: lidarr_config_enable_ssl
   ansible.builtin.assert:
+    quiet: true
     that:
       - lidarr_config_ssl_cert_path | length > 0
     fail_msg: >
@@ -29,6 +30,7 @@
 - name: 'Prep | assert update script requirements'
   when: not lidarr_config_update_mechanism
   ansible.builtin.assert:
+    quiet: true
     that:
       - lidarr_config_update_script_path | length > 0
     fail_msg: >
