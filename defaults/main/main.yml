@@ -11,8 +11,8 @@
 # Older versions (<2) are not supported.
 #
 # Values:
-#   {VERSION}: tagged release to use ('v2.9.6.4552').
-#    'latest': use latest stable release.
+#   {VERSION}: Tagged release to use ('v2.9.6.4552').
+#      latest: Use latest stable release.
 #
 # Default: 'latest'.
 lidarr_service_version: 'latest'
