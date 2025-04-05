@@ -1,25 +1,25 @@
 ---
 # yamllint disable rule:line-length
-- name: 'Update mechanism | verify'
+- name: 'Update mechanisms | verify'
   hosts: 'all'
   gather_facts: false
   tasks:
-    - name: 'Update mechanism | verify | gather service status'
+    - name: 'Update mechanisms | verify | gather service status'
       ansible.builtin.service_facts:
 
     # Lidarr will fail if configuration is bad (r_pufky.srv.systemd)
-    - name: 'Update mechanism | verify | assert lidarr.service active'
+    - name: 'Update mechanisms | verify | assert lidarr.service active'
       ansible.builtin.assert:
         that:
           - '"lidarr.service" in ansible_facts.services'
           - 'ansible_facts["services"]["lidarr.service"]["state"] == "running"'
         fail_msg: 'lidarr.service should be enabled and running.'
 
-- name: 'Update mechanism | verify | script enabled'
+- name: 'Update mechanisms | verify | script enabled'
   hosts: 'lidarr-debian-12-update_mechanisms'
   gather_facts: false
   tasks:
-    - name: 'Update mechanism | verify | script enabled | query config.xml'
+    - name: 'Update mechanisms | verify | script enabled | query config.xml'
       ansible.builtin.copy:
         src: 'files/config_script.xml'
         dest: '/var/lib/lidarr/config.xml'
@@ -30,7 +30,7 @@
       diff: true
       register: _test_lidarr_config_xml
 
-    - name: 'Update mechanism | verify | script enabled | assert config.xml'
+    - name: 'Update mechanisms | verify | script enabled | assert config.xml'
       ansible.builtin.assert:
         that:
           - not _test_lidarr_config_xml.changed
@@ -38,7 +38,7 @@
           /var/lib/lidarr/config.xml is not in expected format:
           {{ _test_lidarr_config_xml.diff }}.
 
-    - name: 'Update mechanism | verify | script enabled | query /var/lib/lidarr/update_script'
+    - name: 'Update mechanisms | verify | script enabled | query /var/lib/lidarr/update_script'
       ansible.builtin.file:
         path: '/var/lib/lidarr/update_script'
         owner: 'media'
@@ -48,7 +48,7 @@
       diff: true
       register: _test_lidarr_update
 
-    - name: 'Update mechanism | verify | script enabled | assert /var/lib/lidarr/update_script'
+    - name: 'Update mechanisms | verify | script enabled | assert /var/lib/lidarr/update_script'
       ansible.builtin.assert:
         that:
           - not _test_lidarr_update.changed
@@ -56,11 +56,11 @@
           /var/lib/lidarr/update_script should exist with 0750 media:media
           {{ _test_lidarr_update.diff }}
 
-- name: 'Update mechanism | verify | script toggled'
+- name: 'Update mechanisms | verify | script toggled'
   hosts: 'lidarr-debian-12-update_mechanisms-toggle'
   gather_facts: false
   tasks:
-    - name: 'Update mechanism | verify | script toggled | query config.xml'
+    - name: 'Update mechanisms | verify | script toggled | query config.xml'
       ansible.builtin.copy:
         src: 'files/config_toggle.xml'
         dest: '/var/lib/lidarr/config.xml'
@@ -71,7 +71,7 @@
       diff: true
       register: _test_lidarr_config_xml
 
-    - name: 'Update mechanism | verify | script toggled | assert config.xml'
+    - name: 'Update mechanisms | verify | script toggled | assert config.xml'
       ansible.builtin.assert:
         that:
           - not _test_lidarr_config_xml.changed
@@ -79,14 +79,14 @@
           /var/lib/lidarr/config.xml is not in expected format:
           {{ _test_lidarr_config_xml.diff }}.
 
-    - name: 'Update mechanism | verify | script toggled | query /var/lib/lidarr/update_script'
+    - name: 'Update mechanisms | verify | script toggled | query /var/lib/lidarr/update_script'
       ansible.builtin.file:
         path: '/var/lib/lidarr/update_script'
         state: 'absent'
       check_mode: true
       register: _test_lidarr_update
 
-    - name: 'Update mechanism | verify | script toggled | assert /var/lib/lidarr/update_script'
+    - name: 'Update mechanisms | verify | script toggled | assert /var/lib/lidarr/update_script'
       ansible.builtin.assert:
         that:
           - not _test_lidarr_update.changed

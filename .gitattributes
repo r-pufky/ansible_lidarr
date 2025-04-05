@@ -1,4 +1,0 @@
-molecule/files/** filter=lfs diff=lfs merge=lfs -text
-*.tar.gz filter=lfs diff=lfs merge=lfs -text
-*.db filter=lfs diff=lfs merge=lfs -text
-*.pfx filter=lfs diff=lfs merge=lfs -text

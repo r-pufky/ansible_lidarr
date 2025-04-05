@@ -1,0 +1,30 @@
+---
+# yamllint disable rule:line-length
+- name: 'Update mechanisms | prepare'
+  hosts: 127.0.0.1
+  connection: local
+  gather_facts: false
+  tasks:
+    - name: 'Update mechanisms | prepare | generate cache location'
+      ansible.builtin.set_fact:
+        _test_cache: '{{ lookup("env", "MOLECULE_PROJECT_DIRECTORY") }}/molecule/cache'
+
+    - name: 'Update mechanisms | prepare | create cache'
+      ansible.builtin.file:
+        path: '{{ _test_cache }}'
+        mode: '0755'
+        state: 'directory'
+
+    - name: 'Update mechanisms | prepare | check 2.9.6.4552'
+      ansible.builtin.stat:
+        path: '{{ _test_cache }}/Lidarr.master.2.9.6.4552.linux-core-x64.tar.gz'
+      register: _test_prepare
+
+    - name: 'Update mechanisms | prepare | cache 2.9.6.4552'
+      when: not _test_prepare.stat.exists
+      ansible.builtin.get_url:
+        url: 'https://github.com/Lidarr/Lidarr/releases/download/v2.9.6.4552/Lidarr.master.2.9.6.4552.linux-core-x64.tar.gz'
+        dest: '{{ _test_cache }}/Lidarr.master.2.9.6.4552.linux-core-x64.tar.gz'
+        mode: '0640'
+      retries: 5
+      delay: 5
