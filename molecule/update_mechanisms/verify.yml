@@ -10,6 +10,7 @@
     # Lidarr will fail if configuration is bad (r_pufky.srv.systemd)
     - name: 'Update mechanisms | verify | assert lidarr.service active'
       ansible.builtin.assert:
+        quiet: true
         that:
           - '"lidarr.service" in ansible_facts.services'
           - 'ansible_facts["services"]["lidarr.service"]["state"] == "running"'
@@ -32,6 +33,7 @@
 
     - name: 'Update mechanisms | verify | script enabled | assert config.xml'
       ansible.builtin.assert:
+        quiet: true
         that:
           - not _test_lidarr_config_xml.changed
         fail_msg: >
@@ -50,6 +52,7 @@
 
     - name: 'Update mechanisms | verify | script enabled | assert /var/lib/lidarr/update_script'
       ansible.builtin.assert:
+        quiet: true
         that:
           - not _test_lidarr_update.changed
         fail_msg: >
@@ -73,6 +76,7 @@
 
     - name: 'Update mechanisms | verify | script toggled | assert config.xml'
       ansible.builtin.assert:
+        quiet: true
         that:
           - not _test_lidarr_config_xml.changed
         fail_msg: >
@@ -88,6 +92,7 @@
 
     - name: 'Update mechanisms | verify | script toggled | assert /var/lib/lidarr/update_script'
       ansible.builtin.assert:
+        quiet: true
         that:
           - not _test_lidarr_update.changed
         fail_msg: '/var/lib/lidarr/update_script should not exist.'

@@ -19,6 +19,7 @@
 
     - name: 'Default | verify | assert config.xml'
       ansible.builtin.assert:
+        quiet: true
         that:
           - not _test_lidarr_config_xml.changed
         fail_msg: >
@@ -28,6 +29,7 @@
     # Lidarr will fail if configuration is bad (r_pufky.srv.systemd)
     - name: 'Default | verify | assert lidarr.service active'
       ansible.builtin.assert:
+        quiet: true
         that:
           - '"lidarr.service" in ansible_facts.services'
           - 'ansible_facts["services"]["lidarr.service"]["state"] == "running"'
@@ -45,6 +47,7 @@
 
     - name: 'Default | verify | assert /var/lib/lidarr'
       ansible.builtin.assert:
+        quiet: true
         that:
           - not _test_lidarr_var_lib.changed
         fail_msg: >
@@ -60,6 +63,7 @@
 
     - name: 'Default | verify | assert /var/lib/lidarr/update_script'
       ansible.builtin.assert:
+        quiet: true
         that:
           - not _test_lidarr_update.changed
         fail_msg: '/var/lib/lidarr/update_script should not exist.'
@@ -73,6 +77,7 @@
 
     - name: 'Default | verify | assert /var/lib/lidarr/lidarr.pfx'
       ansible.builtin.assert:
+        quiet: true
         that:
           - not _test_lidarr_pfx.changed
         fail_msg: '/var/lib/lidarr/lidarr.pfx should not exist.'
@@ -89,6 +94,7 @@
 
     - name: 'Default | verify | assert /data/media'
       ansible.builtin.assert:
+        quiet: true
         that:
           - not _test_lidarr_data_media.changed
         fail_msg: >

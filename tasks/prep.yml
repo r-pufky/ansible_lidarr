@@ -92,7 +92,7 @@
       # Settings > UI > Style
       Theme: '{{ lidarr_config_theme | default("auto") | lower }}',
     }
-    _lidarr_migrate_metadata: '{{ lidarr_role_github_extract_migrate_files if not lidarr_service_migrate_metadata else lidarr_role_github_extract_migrate_files + ["MediaCover"] }}'
+    _lidarr_migrate_metadata: '{{ lidarr_role_repo_extract_migrate_files if not lidarr_service_migrate_metadata else lidarr_role_repo_extract_migrate_files + ["MediaCover"] }}'
 
 - name: 'Prep | add config extensions'
   when: lidarr_config_extensions | length > 0

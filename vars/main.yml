@@ -39,14 +39,13 @@ lidarr_role_packages:
 # Reference:
 # * https://github.com/Lidarr/Lidarr/releases/latest
 
-lidarr_role_github_owner: 'Lidarr'
-lidarr_role_github_repo: 'Lidarr'
-lidarr_role_github_repo_archive_type: 'tar.gz'
-lidarr_role_github_extract_dest: '/opt/lidarr'
-lidarr_role_github_extract_symlink_target: '/opt/lidarr/lidarr'
-lidarr_role_github_binary_specifier: 'v'
-lidarr_role_github_binary_url: '{VERSION}/Lidarr.master.{BARE_VERSION}.linux-core-x64.tar.gz'
-lidarr_role_github_extract_migrate_files:
+lidarr_role_repo_release_owner: 'Lidarr'
+lidarr_role_repo_release_repo: 'Lidarr'
+lidarr_role_repo_extract_dir: '/opt/lidarr'
+lidarr_role_repo_extract_symlink_target: '/opt/lidarr/lidarr'
+lidarr_role_repo_release_specifier: 'v'
+lidarr_role_repo_release_asset: 'Lidarr.master.{BARE_VERSION}.linux-core-x64.tar.gz'
+lidarr_role_repo_extract_migrate_files:
   - 'lidarr.db'
   - 'lidarr.db-shm'  # Lidarr never closes DB's correctly.
   - 'lidarr.db-wal'
