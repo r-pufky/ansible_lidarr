@@ -1,5 +1,4 @@
 ---
-# yamllint disable rule:line-length
 - name: 'Update mechanisms | verify'
   hosts: 'all'
   gather_facts: false
@@ -20,79 +19,62 @@
   hosts: 'lidarr-debian-12-update_mechanisms'
   gather_facts: false
   tasks:
-    - name: 'Update mechanisms | verify | script enabled | query config.xml'
-      ansible.builtin.copy:
-        src: 'files/config_script.xml'
-        dest: '/var/lib/lidarr/config.xml'
-        owner: 'media'
-        group: 'media'
-        mode: '0600'
-      check_mode: true
-      diff: true
-      register: _test_lidarr_config_xml
+    - name: 'Update mechanisms | verify | script enabled | config.xml'
+      ansible.builtin.include_role:
+        name: 'r_pufky.srv.tests'
+        tasks_from: 'copy.yml'
+      vars:
+        test_name: 'Enable SSL | verify | script enabled | config.xml'
+        test_src: 'files/config_script.xml'
+        test_file: '/var/lib/lidarr/config.xml'
+        test_owner: 'media'
+        test_group: 'media'
+        test_mode: '0600'
 
-    - name: 'Update mechanisms | verify | script enabled | assert config.xml'
-      ansible.builtin.assert:
-        quiet: true
-        that:
-          - not _test_lidarr_config_xml.changed
-        fail_msg: >
-          /var/lib/lidarr/config.xml is not in expected format:
-          {{ _test_lidarr_config_xml.diff }}.
-
-    - name: 'Update mechanisms | verify | script enabled | query /var/lib/lidarr/update_script'
-      ansible.builtin.file:
-        path: '/var/lib/lidarr/update_script'
-        owner: 'media'
-        group: 'media'
-        mode: '0750'
-      check_mode: true
-      diff: true
-      register: _test_lidarr_update
-
-    - name: 'Update mechanisms | verify | script enabled | assert /var/lib/lidarr/update_script'
-      ansible.builtin.assert:
-        quiet: true
-        that:
-          - not _test_lidarr_update.changed
-        fail_msg: >
-          /var/lib/lidarr/update_script should exist with 0750 media:media
-          {{ _test_lidarr_update.diff }}
+    - name: >-
+        Update mechanisms | verify | script enabled |
+        /var/lib/lidarr/update_script
+      ansible.builtin.include_role:
+        name: 'r_pufky.srv.tests'
+        tasks_from: 'file.yml'
+      vars:
+        test_name: >-
+          Update mechanisms | verify | script enabled |
+          /var/lib/lidarr/update_script
+        test_file: '/var/lib/lidarr/update_script'
+        test_owner: 'media'
+        test_group: 'media'
+        test_mode: '0750'
+        test_state: 'file'
 
 - name: 'Update mechanisms | verify | script toggled'
   hosts: 'lidarr-debian-12-update_mechanisms-toggle'
   gather_facts: false
   tasks:
-    - name: 'Update mechanisms | verify | script toggled | query config.xml'
-      ansible.builtin.copy:
-        src: 'files/config_toggle.xml'
-        dest: '/var/lib/lidarr/config.xml'
-        owner: 'media'
-        group: 'media'
-        mode: '0600'
-      check_mode: true
-      diff: true
-      register: _test_lidarr_config_xml
+    - name: 'Update mechanisms | verify | script toggled | config.xml'
+      ansible.builtin.include_role:
+        name: 'r_pufky.srv.tests'
+        tasks_from: 'copy.yml'
+      vars:
+        test_name: 'Update mechanisms | verify | script toggled | config.xml'
+        test_src: 'files/config_toggle.xml'
+        test_file: '/var/lib/lidarr/config.xml'
+        test_owner: 'media'
+        test_group: 'media'
+        test_mode: '0600'
 
-    - name: 'Update mechanisms | verify | script toggled | assert config.xml'
-      ansible.builtin.assert:
-        quiet: true
-        that:
-          - not _test_lidarr_config_xml.changed
-        fail_msg: >
-          /var/lib/lidarr/config.xml is not in expected format:
-          {{ _test_lidarr_config_xml.diff }}.
-
-    - name: 'Update mechanisms | verify | script toggled | query /var/lib/lidarr/update_script'
-      ansible.builtin.file:
-        path: '/var/lib/lidarr/update_script'
-        state: 'absent'
-      check_mode: true
-      register: _test_lidarr_update
-
-    - name: 'Update mechanisms | verify | script toggled | assert /var/lib/lidarr/update_script'
-      ansible.builtin.assert:
-        quiet: true
-        that:
-          - not _test_lidarr_update.changed
-        fail_msg: '/var/lib/lidarr/update_script should not exist.'
+    - name: >-
+        Update mechanisms | verify | script toggled |
+        /var/lib/lidarr/update_script
+      ansible.builtin.include_role:
+        name: 'r_pufky.srv.tests'
+        tasks_from: 'file.yml'
+      vars:
+        test_name: >-
+          Update mechanisms | verify | script toggled |
+          /var/lib/lidarr/update_script
+        test_file: '/var/lib/lidarr/update_script'
+        test_owner: '{{ omit }}'
+        test_group: '{{ omit }}'
+        test_mode: '{{ omit }}'
+        test_state: 'absent'

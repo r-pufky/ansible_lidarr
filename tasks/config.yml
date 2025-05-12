@@ -15,6 +15,7 @@
 #
 # Reference:
 # * https://github.com/Servarr/Wiki/blob/master/servarr/servarr-install-script.sh
+# yamllint enable rule:line-length
 
 - name: 'Config | Lidarr service'
   ansible.builtin.include_role:
@@ -32,10 +33,15 @@
             - 'network.target'
         service:
           type: 'simple'
-          exec_start: ['{{ lidarr_role_repo_extract_symlink_target }}/Lidarr -nobrowser -data={{ lidarr_service_data_dir }}']
+          exec_start:
+            - >-
+              {{ lidarr_role_repo_extract_symlink }}/Lidarr
+              -nobrowser
+              -data={{ lidarr_service_data_dir }}
           timeout_stop_sec: 20
           restart: 'always'  # always restart for periodic service restarts
-          runtime_max_sec: '{{ "1d" if lidarr_service_restart_daily_enable else "infinity" }}'
+          runtime_max_sec:
+            '{{ "1d" if lidarr_service_restart_daily_enable else "infinity" }}'
         exec:
           user: '{{ lidarr_user }}'
           group: '{{ lidarr_group }}'
@@ -52,17 +58,19 @@
     state: 'stopped'
 
 - name: 'Config | set {{ lidarr_service_data_dir }}'
-  ansible.builtin.file:
-    path: '{{ lidarr_service_data_dir }}'
-    owner: '{{ lidarr_user }}'
-    group: '{{ lidarr_group }}'
-    mode: '0775'
-    recurse: '{{ lidarr_service_permissions_recursive_enable }}'
-    state: 'directory'
-  become: true
+  ansible.builtin.include_role:
+    name: 'r_pufky.srv.utils'
+    tasks_from: 'remote_file.yml'
+  vars:
+    file_path: '{{ lidarr_service_data_dir }}'
+    file_owner: '{{ _lidarr_uid }}'
+    file_group: '{{ _lidarr_gid }}'
+    file_mode: '0775'
+    file_recurse: '{{ lidarr_service_permissions_recursive_enable }}'
+    file_state: 'directory'
 
-- name: 'Config | set {{ lidarr_service_data_dir }}/lidarr.pfx'  # noqa name[template] full path
-  when: lidarr_config_enable_ssl
+- name: 'Config | set {{ lidarr_service_data_dir }}/lidarr.pfx'
+  when: lidarr_config_enable_ssl   # noqa name[template] full path
   ansible.builtin.copy:
     src: '{{ lidarr_config_ssl_cert_path }}'
     dest: '{{ lidarr_service_data_dir }}/lidarr.pfx'
@@ -71,14 +79,14 @@
     mode: '0640'
     force: true
 
-- name: 'Config | remove {{ lidarr_service_data_dir }}/lidarr.pfx'  # noqa name[template] full path
-  when: not lidarr_config_enable_ssl
+- name: 'Config | remove {{ lidarr_service_data_dir }}/lidarr.pfx'
+  when: not lidarr_config_enable_ssl  # noqa name[template] full path
   ansible.builtin.file:
     dest: '{{ lidarr_service_data_dir }}/lidarr.pfx'
     state: 'absent'
 
-- name: 'Config | set {{ lidarr_service_data_dir }}/update_script'  # noqa name[template] full path
-  when: not lidarr_config_update_mechanism
+- name: 'Config | set {{ lidarr_service_data_dir }}/update_script'
+  when: not lidarr_config_update_mechanism  # noqa name[template] full path
   ansible.builtin.copy:
     src: '{{ lidarr_config_update_script_path }}'
     dest: '{{ lidarr_service_data_dir }}/update_script'
@@ -87,29 +95,34 @@
     mode: '0750'
     force: true
 
-- name: 'Config | remove {{ lidarr_service_data_dir }}/update_script'  # noqa name[template] full path
-  when: lidarr_config_update_mechanism
+- name: 'Config | remove {{ lidarr_service_data_dir }}/update_script'
+  when: lidarr_config_update_mechanism  # noqa name[template] full path
   ansible.builtin.file:
     dest: '{{ lidarr_service_data_dir }}/update_script'
     state: 'absent'
 
 # Use UID/GID as some media filesystems may be remote.
 - name: 'Config | set media root folders'
-  ansible.builtin.file:
-    path: '{{ item }}'
-    owner: '{{ _lidarr_uid }}'
-    group: '{{ _lidarr_gid }}'
-    mode: '{{ lidarr_media_perms_folder }}'
-    recurse: true
-    state: 'directory'
-  become: true
+  ansible.builtin.include_role:
+    name: 'r_pufky.srv.utils'
+    tasks_from: 'remote_file.yml'
+  vars:
+    file_path: '{{ item }}'
+    file_owner: '{{ _lidarr_uid }}'
+    file_group: '{{ _lidarr_gid }}'
+    file_mode: '{{ lidarr_media_perms_folder }}'
+    file_recurse: '{{ lidarr_service_permissions_recursive_enable }}'
+    file_state: 'directory'
   loop: '{{ lidarr_media_root_folders }}'
 
 # Use UID/GID as some media filesystems may be remote.
 - name: 'Config | set media root files'
   when: lidarr_media_set_perms_file_enable
-  ansible.builtin.shell: |
-    find '{{ item }}' -type f -exec chmod {{ lidarr_media_perms_file }} {}; chown {{ _lidarr_uid }}:{{ _lidarr_gid }} {} \;
+  ansible.builtin.shell: >-
+    find '{{ item }}'
+    -type f
+    -exec chmod {{ lidarr_media_perms_file }} {};
+      chown {{ _lidarr_uid }}:{{ _lidarr_gid }} {} \;
   changed_when: false
   loop: '{{ lidarr_media_root_folders }}'
 

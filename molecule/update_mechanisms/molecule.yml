@@ -1,8 +1,14 @@
 ---
 # yamllint disable rule:line-length
-# Confirm:
+###############################################################################
+# Update Mechanisms
+###############################################################################
+# Verify update scripts are deployed and executed correctly.
+#
+# Tests:
 # * /var/lib/lidarr/update_script exists.
 # * toggling script update on, then off removes update_script.
+
 dependency:
   name: 'galaxy'
 driver:

@@ -1,5 +1,4 @@
 ---
-# yamllint disable rule:line-length
 ###############################################################################
 # Ports Configuration
 ###############################################################################
@@ -9,7 +8,23 @@
 # * https://github.com/r-pufky/ansible_ufw
 
 lidarr_ports:
-  - {proto: 'tcp', from_ip: 'any', to_port: 8686, direction: 'in', comment: 'Lidarr http'}
-  - {proto: 'tcp', from_ip: '127.0.0.1', to_port: 8686, direction: 'in', comment: 'Lidarr http api'}
-  - {proto: 'tcp', from_ip: 'any', to_port: 6868, direction: 'in', comment: 'Lidarr https'}
-  - {proto: 'tcp', from_ip: '127.0.0.1', to_port: 6868, direction: 'in', comment: 'Lidarr https api'}
+  - proto: 'tcp'
+    from_ip: 'any'
+    to_port: 8686,
+    direction: 'in'
+    comment: 'Lidarr HTTP'
+  - proto: 'tcp'
+    from_ip: '127.0.0.1'
+    to_port: 8686
+    direction: 'in'
+    comment: 'Lidarr HTTP API'
+  - proto: 'tcp'
+    from_ip: 'any'
+    to_port: 6868
+    direction: 'in'
+    comment: 'Lidarr HTTPS'
+  - proto: 'tcp'
+    from_ip: '127.0.0.1'
+    to_port: 6868
+    direction: 'in'
+    comment: 'Lidarr HTTPS API'

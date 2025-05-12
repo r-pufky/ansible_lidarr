@@ -13,6 +13,7 @@
 # Reference:
 # * https://github.com/Servarr/Wiki/blob/master/servarr/servarr-install-script.sh
 # * https://github.com/Lidarr/Lidarr/releases
+# yamllint enable rule:line-length
 
 # Last time Lidarr options were validated against a default configuration.
 lidarr_role_validate_date: '2025-02-05'
@@ -42,9 +43,10 @@ lidarr_role_packages:
 lidarr_role_repo_release_owner: 'Lidarr'
 lidarr_role_repo_release_repo: 'Lidarr'
 lidarr_role_repo_extract_dir: '/opt/lidarr'
-lidarr_role_repo_extract_symlink_target: '/opt/lidarr/lidarr'
+lidarr_role_repo_extract_symlink: '/opt/lidarr/lidarr'
 lidarr_role_repo_release_specifier: 'v'
-lidarr_role_repo_release_asset: 'Lidarr.master.{BARE_VERSION}.linux-core-x64.tar.gz'
+lidarr_role_repo_release_asset:
+  'Lidarr.master.{BARE_VERSION}.linux-core-x64.tar.gz'
 lidarr_role_repo_extract_migrate_files:
   - 'lidarr.db'
   - 'lidarr.db-shm'  # Lidarr never closes DB's correctly.

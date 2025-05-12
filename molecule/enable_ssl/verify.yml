@@ -1,5 +1,4 @@
 ---
-# yamllint disable rule:line-length
 - name: 'Enable SSL | verify'
   hosts: 'all'
   gather_facts: false
@@ -20,79 +19,58 @@
   hosts: 'lidarr-debian-12-enable_ssl'
   gather_facts: false
   tasks:
-    - name: 'Enable SSL | verify | SSL enabled | query config.xml'
-      ansible.builtin.copy:
-        src: 'files/config_ssl.xml'
-        dest: '/var/lib/lidarr/config.xml'
-        owner: 'media'
-        group: 'media'
-        mode: '0600'
-      check_mode: true
-      diff: true
-      register: _test_lidarr_config_xml
+    - name: 'Enable SSL | verify | SSL enabled | config.xml'
+      ansible.builtin.include_role:
+        name: 'r_pufky.srv.tests'
+        tasks_from: 'copy.yml'
+      vars:
+        test_name: 'Enable SSL | verify | SSL enabled | config.xml'
+        test_src: 'files/config_ssl.xml'
+        test_file: '/var/lib/lidarr/config.xml'
+        test_owner: 'media'
+        test_group: 'media'
+        test_mode: '0600'
 
-    - name: 'Enable SSL | verify | SSL enabled | assert config.xml'
-      ansible.builtin.assert:
-        quiet: true
-        that:
-          - not _test_lidarr_config_xml.changed
-        fail_msg: >
-          /var/lib/lidarr/config.xml is not in expected format:
-          {{ _test_lidarr_config_xml.diff }}.
-
-    - name: 'Enable SSL | verify | SSL enabled | query /var/lib/lidarr/lidarr.pfx'
-      ansible.builtin.file:
-        path: '/var/lib/lidarr/lidarr.pfx'
-        owner: 'media'
-        group: 'media'
-        mode: '0640'
-      check_mode: true
-      diff: true
-      register: _test_lidarr_pfx
-
-    - name: 'Enable SSL | verify | SSL enabled | assert /var/lib/lidarr/lidarr.pfx'
-      ansible.builtin.assert:
-        quiet: true
-        that:
-          - not _test_lidarr_pfx.changed
-        fail_msg: >
-          /var/lib/lidarr/lidarr.pfx should exist with 0640 media:media
-          {{ _test_lidarr_pfx.diff }}
+    - name: 'Enable SSL | verify | SSL enabled | /var/lib/lidarr/lidarr.pfx'
+      ansible.builtin.include_role:
+        name: 'r_pufky.srv.tests'
+        tasks_from: 'file.yml'
+      vars:
+        test_name: >-
+          Enable SSL | verify | SSL enabled |
+          /var/lib/lidarr/lidarr.pfx
+        test_file: '/var/lib/lidarr/lidarr.pfx'
+        test_owner: 'media'
+        test_group: 'media'
+        test_mode: '0640'
+        test_state: 'file'
 
 - name: 'Enable SSL | verify | SSL toggled'
   hosts: 'lidarr-debian-12-enable_ssl-toggle'
   gather_facts: false
   tasks:
-    - name: 'Enable SSL | verify | SSL toggled | query config.xml'
-      ansible.builtin.copy:
-        src: 'files/config_toggle.xml'
-        dest: '/var/lib/lidarr/config.xml'
-        owner: 'media'
-        group: 'media'
-        mode: '0600'
-      check_mode: true
-      diff: true
-      register: _test_lidarr_config_xml
+    - name: 'Enable SSL | verify | SSL toggled | config.xml'
+      ansible.builtin.include_role:
+        name: 'r_pufky.srv.tests'
+        tasks_from: 'copy.yml'
+      vars:
+        test_name: 'Enable SSL | verify | SSL toggled | config.xml'
+        test_src: 'files/config_toggle.xml'
+        test_file: '/var/lib/lidarr/config.xml'
+        test_owner: 'media'
+        test_group: 'media'
+        test_mode: '0600'
 
-    - name: 'Enable SSL | verify | SSL toggled | assert config.xml'
-      ansible.builtin.assert:
-        quiet: true
-        that:
-          - not _test_lidarr_config_xml.changed
-        fail_msg: >
-          /var/lib/lidarr/config.xml is not in expected format:
-          {{ _test_lidarr_config_xml.diff }}.
-
-    - name: 'Enable SSL | verify | SSL toggled | query /var/lib/lidarr/lidarr.pfx'
-      ansible.builtin.file:
-        path: '/var/lib/lidarr/lidarr.pfx'
-        state: 'absent'
-      check_mode: true
-      register: _test_lidarr_pfx
-
-    - name: 'Enable SSL | verify | SSL toggled | assert /var/lib/lidarr/lidarr.pfx'
-      ansible.builtin.assert:
-        quiet: true
-        that:
-          - not _test_lidarr_pfx.changed
-        fail_msg: '/var/lib/lidarr/lidarr.pfx should not exist.'
+    - name: 'Enable SSL | verify | SSL toggled | /var/lib/lidarr/lidarr.pfx'
+      ansible.builtin.include_role:
+        name: 'r_pufky.srv.tests'
+        tasks_from: 'file.yml'
+      vars:
+        test_name: >-
+          Enable SSL | verify | SSL toggled |
+          /var/lib/lidarr/lidarr.pfx
+        test_file: '/var/lib/lidarr/lidarr.pfx'
+        test_owner: '{{ omit }}'
+        test_group: '{{ omit }}'
+        test_mode: '{{ omit }}'
+        test_state: 'absent'

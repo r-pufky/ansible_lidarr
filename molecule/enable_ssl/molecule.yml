@@ -1,12 +1,18 @@
 ---
 # yamllint disable rule:line-length
-# Confirm:
+###############################################################################
+# Enable SSL
+###############################################################################
+# SSL is enabled and toggled correctly.
+#
+# Tests:
 # * /var/lib/lidarr/lidarr.pfx exists.
 # * toggling ssl on, then off removes lidarr.pfx.
 #   <EnableSsl>False</EnableSsl>  # true requires ssl_cert
 #   <SslCertPath>/var/lib/lidarr/snakeoil.pfx</SslCertPath>
 #   <SslCertPassword>testing</SslCertPassword>  # stored plaintext.
-# lidarr_config_enable_ssl -- test when false w and w/o cert
+# * lidarr_config_enable_ssl -- test when false w and w/o cert
+
 dependency:
   name: 'galaxy'
 driver:

@@ -16,6 +16,7 @@
 # * https://wiki.servarr.com/lidarr
 # * https://github.com/Lidarr/Lidarr/releases
 # * https://github.com/Servarr/Wiki/blob/master/servarr/servarr-install-script.sh
+# yamllint enable rule:line-length
 
 - name: 'Prep | assert SSL requirements'
   when: lidarr_config_enable_ssl
@@ -72,29 +73,68 @@
       Port: '{{ lidarr_config_port | default(8686) }}',
       UrlBase: '{{ lidarr_config_url_base | default("") }}',
       InstanceName: '{{ lidarr_config_instance_name | default("Lidarr") }}',
-      EnableSsl: '{{ lidarr_config_enable_ssl | default(false) | bool | string | capitalize }}',
+      EnableSsl: '{{
+          lidarr_config_enable_ssl | default(false) |
+          bool | string | capitalize
+        }}',
       SslPort: '{{ lidarr_config_ssl_port | default(6868) }}',
-      SslCertPath: '{{ "{{ lidarr_service_data_dir }}/lidarr.pfx" if lidarr_config_enable_ssl | default(false) else "" }}',  # static placement; var determines controller source.
+      SslCertPath: '{{
+          "{{ lidarr_service_data_dir }}/lidarr.pfx"
+          if lidarr_config_enable_ssl | default(false) else
+          ""
+        }}',
       SslCertPassword: '{{ lidarr_config_ssl_cert_password | default("") }}',
       # TODO(V4): lidarr_config_authentication_method switches from 'none' to
       #     'eternal' on V4 codebase sync.
-      AuthenticationMethod: '{{ lidarr_config_authentication_method | default("Forms") | capitalize }}',
-      AuthenticationRequired: '{{ "Enabled" if lidarr_config_authentication_required | default(false) else "DisabledForLocalAddresses" }}',
-      ApiKey: '{{ lidarr_config_api_key | default(inventory_hostname | md5 | truncate(32, true, "")) }}',
+      AuthenticationMethod: '{{
+          lidarr_config_authentication_method | default("Forms") | capitalize
+        }}',
+      AuthenticationRequired: '{{
+          "Enabled"
+          if lidarr_config_authentication_required | default(false) else
+          "DisabledForLocalAddresses"
+        }}',
+      ApiKey: '{{
+          lidarr_config_api_key | default(inventory_hostname |
+          md5 | truncate(32, true, ""))
+        }}',
       LogLevel: '{{ lidarr_config_log_level | default("info") | lower }}',
       LogSizeLimit: '{{ lidarr_config_log_size_limit | default(1) }}',
-      AnalyticsEnabled: '{{ lidarr_config_analytics_enabled | default(false) | bool | string | capitalize }}',
+      AnalyticsEnabled: '{{
+          lidarr_config_analytics_enabled | default(false) |
+          bool | string | capitalize
+        }}',
       Branch: '{{ lidarr_config_branch | default("master") | lower }}',
-      UpdateAutomatically: '{{  lidarr_config_update_automatically | default(false) | bool | string | capitalize }}',
-      UpdateMechanism: '{{ "BuiltIn" if lidarr_config_update_mechanism | default(true) else "Script" }}',
-      UpdateScriptPath: '{{ "{{ lidarr_service_data_dir }}/update_script" if not lidarr_config_update_mechanism | default(true) else "" }}',  # static placement; var determines controller source.
-      LaunchBrowser: '{{ lidarr_config_launch_browser | default(false) | bool | string | capitalize }}',
+      UpdateAutomatically: '{{
+          lidarr_config_update_automatically | default(false) |
+          bool | string | capitalize
+        }}',
+      UpdateMechanism: '{{
+          "BuiltIn"
+          if lidarr_config_update_mechanism | default(true) else
+          "Script"
+        }}',
+      UpdateScriptPath: '{{
+          "{{ lidarr_service_data_dir }}/update_script"
+          if not lidarr_config_update_mechanism | default(true) else
+          ""
+        }}',
+      LaunchBrowser: '{{
+          lidarr_config_launch_browser | default(false) |
+          bool | string | capitalize
+        }}',
       # Settings > UI > Style
       Theme: '{{ lidarr_config_theme | default("auto") | lower }}',
     }
-    _lidarr_migrate_metadata: '{{ lidarr_role_repo_extract_migrate_files if not lidarr_service_migrate_metadata else lidarr_role_repo_extract_migrate_files + ["MediaCover"] }}'
+    _lidarr_migrate_metadata: '{{
+        lidarr_role_repo_extract_migrate_files
+        if not lidarr_service_migrate_metadata else
+        lidarr_role_repo_extract_migrate_files + ["MediaCover"]
+      }}'
 
 - name: 'Prep | add config extensions'
   when: lidarr_config_extensions | length > 0
   ansible.builtin.set_fact:
-    _lidarr_config: '{{ _lidarr_config | combine(lidarr_config_extensions, recursive=true) }}'
+    _lidarr_config: '{{
+        _lidarr_config | combine(lidarr_config_extensions, recursive=true)
+      }}'

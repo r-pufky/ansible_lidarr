@@ -1,5 +1,4 @@
 ---
-# yamllint disable rule:line-length
 ###############################################################################
 # Lidarr Service Config (config.xml)
 ###############################################################################
@@ -101,7 +100,8 @@ lidarr_config_authentication_required: false
 #   '': random 32 character alphanumeric hash
 #
 # Default: '{RANDOM}' (insecure idempotent API key based on hostname).
-lidarr_config_api_key: '{{ inventory_hostname | md5 | truncate(32, true, "") }}'
+lidarr_config_api_key:
+  '{{ inventory_hostname | md5 | truncate(32, true, "") }}'
 
 ###############################################################################
 # Settings > General > Logging
