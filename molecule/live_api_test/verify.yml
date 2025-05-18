@@ -8,7 +8,7 @@
 
     - name: 'Live API test | verify | config.xml'
       ansible.builtin.include_role:
-        name: 'r_pufky.srv.tests'
+        name: 'r_pufky.lib.tests'
         tasks_from: 'copy.yml'
       vars:
         test_name: 'Live API test | verify | config.xml'
@@ -18,18 +18,18 @@
         test_group: 'media'
         test_mode: '0600'
 
-    # Lidarr will fail if configuration is bad (r_pufky.srv.systemd)
+    # Lidarr will fail if configuration is bad (r_pufky.deb.systemd)
     - name: 'Live API test | verify | assert lidarr.service active'
       ansible.builtin.assert:
         quiet: true
         that:
           - '"lidarr.service" in ansible_facts.services'
           - 'ansible_facts["services"]["lidarr.service"]["state"] == "running"'
-        fail_msg: 'lidarr.service should be enabled and running.'
+        fail_msg: '✘ lidarr.service should be enabled and running.'
 
     - name: 'Live API test | verify | /var/lib/lidarr'
       ansible.builtin.include_role:
-        name: 'r_pufky.srv.tests'
+        name: 'r_pufky.lib.tests'
         tasks_from: 'file.yml'
       vars:
         test_name: 'Live API test | verify | /var/lib/lidarr'
@@ -41,7 +41,7 @@
 
     - name: 'Live API test | verify | /var/lib/lidarr/update_script'
       ansible.builtin.include_role:
-        name: 'r_pufky.srv.tests'
+        name: 'r_pufky.lib.tests'
         tasks_from: 'file.yml'
       vars:
         test_name: 'Live API test | verify | /var/lib/lidarr/update_script'
@@ -53,7 +53,7 @@
 
     - name: 'Live API test | verify | /var/lib/lidarr/lidarr.pfx'
       ansible.builtin.include_role:
-        name: 'r_pufky.srv.tests'
+        name: 'r_pufky.lib.tests'
         tasks_from: 'file.yml'
       vars:
         test_name: 'Live API test | verify | /var/lib/lidarr/lidarr.pfx'
@@ -65,7 +65,7 @@
 
     - name: 'Live API test | verify | /data/media'
       ansible.builtin.include_role:
-        name: 'r_pufky.srv.tests'
+        name: 'r_pufky.lib.tests'
         tasks_from: 'file.yml'
       vars:
         test_name: 'Live API test | verify | /data/media'

@@ -9,7 +9,7 @@
 # Version.
 #
 # Older versions (<2) are not supported. Set repo_host_access_token if github
-# API is rate limited. See r_pufky.srv.repo.
+# API is rate limited. See r_pufky.deb.repo.
 #
 # Values:
 #   {VERSION}: Tagged release to use ('v2.9.6.4552').
@@ -96,7 +96,7 @@ lidarr_group: 'media'
 
 # Create lidarr_user, lidarr_group if not detected?
 #
-# Applied via r_pufky.srv.users, see vars/main.yml for default user attributes.
+# Applied via r_pufky.deb.users, see vars/main.yml for default user attributes.
 #
 # Default: True.
 lidarr_create_user: true

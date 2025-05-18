@@ -1,5 +1,4 @@
 ---
-# yamllint disable rule:line-length
 ###############################################################################
 # Enable SSL
 ###############################################################################
@@ -29,7 +28,10 @@ provisioner:
     group_vars:
       all:
         lidarr_config_enable_ssl: true
-        lidarr_config_ssl_cert_path: '{{ lookup("env", "MOLECULE_PROJECT_DIRECTORY") }}/molecule/cache/test.pfx'
+        lidarr_config_ssl_cert_path: '{{
+            lookup("env", "MOLECULE_PROJECT_DIRECTORY") ~
+            "/molecule/cache/test.pfx"
+          }}'
         lidarr_config_ssl_cert_password: 'test'
         lidarr_media_root_folders: ['/data/media']
         lidarr_config_api_key: 'abcdef1234567890abcdef1234567890'
@@ -37,10 +39,18 @@ provisioner:
         repo_testing_versions:
           - comment: 'default'
             version: 'v2.9.6.4552'
-            asset: '{{ lookup("env", "MOLECULE_PROJECT_DIRECTORY") }}/molecule/cache/Lidarr.master.2.9.6.4552.linux-core-x64.tar.gz'
+            asset: '{{
+                lookup("env", "MOLECULE_PROJECT_DIRECTORY") ~
+                "/molecule/cache/" ~
+                "Lidarr.master.2.9.6.4552.linux-core-x64.tar.gz"
+              }}'
           - comment: 'toggle'
             version: 'v2.9.6.4552'
-            asset: '{{ lookup("env", "MOLECULE_PROJECT_DIRECTORY") }}/molecule/cache/Lidarr.master.2.9.6.4552.linux-core-x64.tar.gz'
+            asset: '{{
+                lookup("env", "MOLECULE_PROJECT_DIRECTORY") ~
+                "/molecule/cache/" ~
+                "Lidarr.master.2.9.6.4552.linux-core-x64.tar.gz"
+              }}'
 platforms:
   - name: 'lidarr-debian-12-enable_ssl'
     image: 'ghcr.io/hifis-net/debian-systemd:12'

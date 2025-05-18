@@ -20,6 +20,7 @@
 # Tests:
 # * Test success against molecule default tests.
 # yamllint enable rule:line-length
+
 dependency:
   name: 'galaxy'
 driver:

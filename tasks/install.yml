@@ -9,7 +9,7 @@
 
 - name: 'Install | packages'
   ansible.builtin.include_role:
-    name: 'r_pufky.srv.apt'
+    name: 'r_pufky.deb.apt'
   vars:
     apt_packages:
       - '{{ lidarr_role_packages }}'
@@ -18,7 +18,7 @@
 - name: 'Install | Lidarr package {{ lidarr_service_version }}'
   when: not lidarr_service_force_config_only_enable
   ansible.builtin.include_role:
-    name: 'r_pufky.srv.repo'
+    name: 'r_pufky.deb.repo'
   vars:
     repo_release_owner: '{{ lidarr_role_repo_release_owner }}'
     repo_release_repo: '{{ lidarr_role_repo_release_repo }}'

@@ -6,14 +6,14 @@
     - name: 'Enable SSL | verify | gather service status'
       ansible.builtin.service_facts:
 
-    # Lidarr will fail if configuration is bad (r_pufky.srv.systemd)
+    # Lidarr will fail if configuration is bad (r_pufky.deb.systemd)
     - name: 'Enable SSL | verify | assert lidarr.service active'
       ansible.builtin.assert:
         quiet: true
         that:
           - '"lidarr.service" in ansible_facts.services'
           - 'ansible_facts["services"]["lidarr.service"]["state"] == "running"'
-        fail_msg: 'lidarr.service should be enabled and running.'
+        fail_msg: '✘ lidarr.service should be enabled and running.'
 
 - name: 'Enable SSL | verify | SSL enabled'
   hosts: 'lidarr-debian-12-enable_ssl'
@@ -21,7 +21,7 @@
   tasks:
     - name: 'Enable SSL | verify | SSL enabled | config.xml'
       ansible.builtin.include_role:
-        name: 'r_pufky.srv.tests'
+        name: 'r_pufky.lib.tests'
         tasks_from: 'copy.yml'
       vars:
         test_name: 'Enable SSL | verify | SSL enabled | config.xml'
@@ -33,7 +33,7 @@
 
     - name: 'Enable SSL | verify | SSL enabled | /var/lib/lidarr/lidarr.pfx'
       ansible.builtin.include_role:
-        name: 'r_pufky.srv.tests'
+        name: 'r_pufky.lib.tests'
         tasks_from: 'file.yml'
       vars:
         test_name: >-
@@ -51,7 +51,7 @@
   tasks:
     - name: 'Enable SSL | verify | SSL toggled | config.xml'
       ansible.builtin.include_role:
-        name: 'r_pufky.srv.tests'
+        name: 'r_pufky.lib.tests'
         tasks_from: 'copy.yml'
       vars:
         test_name: 'Enable SSL | verify | SSL toggled | config.xml'
@@ -63,7 +63,7 @@
 
     - name: 'Enable SSL | verify | SSL toggled | /var/lib/lidarr/lidarr.pfx'
       ansible.builtin.include_role:
-        name: 'r_pufky.srv.tests'
+        name: 'r_pufky.lib.tests'
         tasks_from: 'file.yml'
       vars:
         test_name: >-

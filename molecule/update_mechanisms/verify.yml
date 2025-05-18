@@ -6,14 +6,14 @@
     - name: 'Update mechanisms | verify | gather service status'
       ansible.builtin.service_facts:
 
-    # Lidarr will fail if configuration is bad (r_pufky.srv.systemd)
+    # Lidarr will fail if configuration is bad (r_pufky.deb.systemd)
     - name: 'Update mechanisms | verify | assert lidarr.service active'
       ansible.builtin.assert:
         quiet: true
         that:
           - '"lidarr.service" in ansible_facts.services'
           - 'ansible_facts["services"]["lidarr.service"]["state"] == "running"'
-        fail_msg: 'lidarr.service should be enabled and running.'
+        fail_msg: '✘ lidarr.service should be enabled and running.'
 
 - name: 'Update mechanisms | verify | script enabled'
   hosts: 'lidarr-debian-12-update_mechanisms'
@@ -21,7 +21,7 @@
   tasks:
     - name: 'Update mechanisms | verify | script enabled | config.xml'
       ansible.builtin.include_role:
-        name: 'r_pufky.srv.tests'
+        name: 'r_pufky.lib.tests'
         tasks_from: 'copy.yml'
       vars:
         test_name: 'Enable SSL | verify | script enabled | config.xml'
@@ -35,7 +35,7 @@
         Update mechanisms | verify | script enabled |
         /var/lib/lidarr/update_script
       ansible.builtin.include_role:
-        name: 'r_pufky.srv.tests'
+        name: 'r_pufky.lib.tests'
         tasks_from: 'file.yml'
       vars:
         test_name: >-
@@ -53,7 +53,7 @@
   tasks:
     - name: 'Update mechanisms | verify | script toggled | config.xml'
       ansible.builtin.include_role:
-        name: 'r_pufky.srv.tests'
+        name: 'r_pufky.lib.tests'
         tasks_from: 'copy.yml'
       vars:
         test_name: 'Update mechanisms | verify | script toggled | config.xml'
@@ -67,7 +67,7 @@
         Update mechanisms | verify | script toggled |
         /var/lib/lidarr/update_script
       ansible.builtin.include_role:
-        name: 'r_pufky.srv.tests'
+        name: 'r_pufky.lib.tests'
         tasks_from: 'file.yml'
       vars:
         test_name: >-

@@ -7,8 +7,8 @@
 # same codebase; any bugs or fixes should be checked for all related services.
 #
 # Generates:
-#   _lidarr_uid: int - lidarr user UID.
-#   _lidarr_gid: int - lidarr user GID.
+#   _lidarr_uid: int - Lidarr user UID.
+#   _lidarr_gid: int - Lidarr user GID.
 #   _lidarr_migrate_metadata: list of str - files and directories to migrate.
 #
 # Reference:
@@ -25,7 +25,7 @@
     that:
       - lidarr_config_ssl_cert_path | length > 0
     fail_msg: >
-      lidarr_config_enable_ssl=true requires
+      ✘ lidarr_config_enable_ssl=true requires
       lidarr_config_ssl_cert_path set.
 
 - name: 'Prep | assert update script requirements'
@@ -35,13 +35,13 @@
     that:
       - lidarr_config_update_script_path | length > 0
     fail_msg: >
-      lidarr_config_update_script_path must be set when
+      ✘ lidarr_config_update_script_path must be set when
       lidarr_config_update_mechanism=False.
 
 - name: 'Prep | manage users'
   when: lidarr_create_user
   ansible.builtin.include_role:
-    name: 'r_pufky.srv.users'
+    name: 'r_pufky.deb.users'
     tasks_from: 'role_account_add.yml'
   vars:
     users_role_group: '{{ lidarr_role_group }}'
