@@ -1,76 +1,60 @@
 ---
-- name: 'Enable SSL | verify'
-  hosts: 'all'
-  gather_facts: false
-  tasks:
-    - name: 'Enable SSL | verify | gather service status'
-      ansible.builtin.service_facts:
-
-    # Lidarr will fail if configuration is bad (r_pufky.deb.systemd)
-    - name: 'Enable SSL | verify | assert lidarr.service active'
-      ansible.builtin.assert:
-        quiet: true
-        that:
-          - '"lidarr.service" in ansible_facts.services'
-          - 'ansible_facts["services"]["lidarr.service"]["state"] == "running"'
-        fail_msg: '✘ lidarr.service should be enabled and running.'
-
-- name: 'Enable SSL | verify | SSL enabled'
+- name: 'Verify | SSL enabled'
   hosts: 'lidarr-debian-12-enable_ssl'
   gather_facts: false
   tasks:
-    - name: 'Enable SSL | verify | SSL enabled | config.xml'
+    - name: 'Verify | SSL enabled | config.xml'
       ansible.builtin.include_role:
         name: 'r_pufky.lib.tests'
         tasks_from: 'copy.yml'
       vars:
-        test_name: 'Enable SSL | verify | SSL enabled | config.xml'
+        test_name: 'Verify | SSL enabled | config.xml'
         test_src: 'files/config_ssl.xml'
-        test_file: '/var/lib/lidarr/config.xml'
+        test_file: '/data/lidarr/config/config.xml'
         test_owner: 'media'
         test_group: 'media'
         test_mode: '0600'
+        test_diff: true
 
-    - name: 'Enable SSL | verify | SSL enabled | /var/lib/lidarr/lidarr.pfx'
+    - name: 'Verify | SSL enabled | /data/lidarr/config/lidarr.pfx'
       ansible.builtin.include_role:
         name: 'r_pufky.lib.tests'
         tasks_from: 'file.yml'
       vars:
-        test_name: >-
-          Enable SSL | verify | SSL enabled |
-          /var/lib/lidarr/lidarr.pfx
-        test_file: '/var/lib/lidarr/lidarr.pfx'
+        test_name: 'Verify | SSL enabled | /data/lidarr/config/lidarr.pfx'
+        test_file: '/data/lidarr/config/lidarr.pfx'
         test_owner: 'media'
         test_group: 'media'
         test_mode: '0640'
         test_state: 'file'
+        test_diff: true
 
-- name: 'Enable SSL | verify | SSL toggled'
+- name: 'Verify | SSL toggled'
   hosts: 'lidarr-debian-12-enable_ssl-toggle'
   gather_facts: false
   tasks:
-    - name: 'Enable SSL | verify | SSL toggled | config.xml'
+    - name: 'Verify | SSL toggled | config.xml'
       ansible.builtin.include_role:
         name: 'r_pufky.lib.tests'
         tasks_from: 'copy.yml'
       vars:
-        test_name: 'Enable SSL | verify | SSL toggled | config.xml'
+        test_name: 'Verify | SSL toggled | config.xml'
         test_src: 'files/config_toggle.xml'
-        test_file: '/var/lib/lidarr/config.xml'
+        test_file: '/data/lidarr/config/config.xml'
         test_owner: 'media'
         test_group: 'media'
         test_mode: '0600'
+        test_diff: true
 
-    - name: 'Enable SSL | verify | SSL toggled | /var/lib/lidarr/lidarr.pfx'
+    - name: 'Verify | SSL toggled | /data/lidarr/config/lidarr.pfx'
       ansible.builtin.include_role:
         name: 'r_pufky.lib.tests'
         tasks_from: 'file.yml'
       vars:
-        test_name: >-
-          Enable SSL | verify | SSL toggled |
-          /var/lib/lidarr/lidarr.pfx
-        test_file: '/var/lib/lidarr/lidarr.pfx'
+        test_name: 'Verify | SSL toggled | /data/lidarr/config/lidarr.pfx'
+        test_file: '/data/lidarr/config/lidarr.pfx'
         test_owner: '{{ omit }}'
         test_group: '{{ omit }}'
         test_mode: '{{ omit }}'
         test_state: 'absent'
+        test_diff: true

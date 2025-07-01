@@ -6,7 +6,7 @@
 # Additional settings are stored in the DB. WebUI locations are headers but all
 # values are stored within config.xml.
 #
-# PascalCase: lidarr_config_bind_address > BindAddress.
+# PascalCase: lidarr_cfg_bind_address > BindAddress.
 #
 # Documented usage here reflect code, installer, and WebUI analysis. These may
 # change over time and should be re-validated from time to time.
@@ -18,45 +18,45 @@
 # Bind Lidarr service to specified interface.
 #
 # Values:
-#           *: bind to all available interfaces (default).
-#        {IP}: bind to valid IP address ('127.0.0.1', '::', etc).
-#   localhost: bind to localhost.
+#           *: Bind to all available interfaces (default).
+#        {IP}: Bind to valid IP address ('127.0.0.1', '::', etc).
+#   localhost: Bind to localhost.
 #
 # Default: '*'.
-lidarr_config_bind_address: '*'
+lidarr_cfg_bind_address: '*'
 
 # HTTP port. Default: 8686.
-lidarr_config_port: 8686
+lidarr_cfg_port: 8686
 
 # URL base for reverse proxy support. Default: '' (disabled).
-lidarr_config_url_base: ''
+lidarr_cfg_url_base: ''
 
 # Lidarr application name for browser tab and syslog logs. Default: 'Lidarr'.
-lidarr_config_instance_name: 'Lidarr'
+lidarr_cfg_instance_name: 'Lidarr'
 
 # Enable SSL? Default: False.
-lidarr_config_enable_ssl: false
+lidarr_cfg_enable_ssl: false
 
 # HTTPS port. Default: 6868.
-lidarr_config_ssl_port: 6868
+lidarr_cfg_ssl_port: 6868
 
 # Path to PFX certificate.
 #
 # Sourced from ansible controller; automatically placed in
-# lidarr_service_data_dir/lidarr.pfx with correct permissions. Lidarr will be
+# lidarr_srv_config_dir/lidarr.pfx with correct permissions. Lidarr will be
 # automatically configured to use the installed location.
 #
-# lidarr_config_ssl_cert_path: 'host_vars/nzb.example.com/data/my_cert.pfx'
+# lidarr_cfg_ssl_cert_path: 'host_vars/nzb.example.com/data/my_cert.pfx'
 #
 # Default: '' (disabled).
-lidarr_config_ssl_cert_path: ''
+lidarr_cfg_ssl_cert_path: ''
 
 # PFX certificate password.
 #
 # WARNING: this is stored unencrypted in Lidarr's config.xml.
 #
 # Default: '' (no password).
-lidarr_config_ssl_cert_password: ''
+lidarr_cfg_ssl_cert_password: ''
 
 ###############################################################################
 # Settings > General > Security
@@ -69,19 +69,19 @@ lidarr_config_ssl_cert_password: ''
 #     toggled on after the user exists in the database . Suggest running
 #     initial role application temporarily disabling this option:
 #
-#     ansible-playbook lidarr.yml -e 'lidarr_config_authentication_method=none'
+#     ansible-playbook lidarr.yml -e 'lidarr_cfg_authentication_method=none'
 #
 # Values:
-#       none: force user creation and auth selection WebUI (first run only).
+#       none: Force user creation and auth selection WebUI (first run only).
 #             basic or forms must be used after first run.
-#      basic: browser pop-up for credentials.
-#      forms: login page for credentials (use for password managers) (default).
+#      basic: Browser pop-up for credentials.
+#      forms: Login page for credentials (use for password managers) (default).
 #
 # Default: 'forms'.
 #
 # Reference:
 # * https://wiki.servarr.com/lidarr/faq#help-i-have-locked-myself-out
-lidarr_config_authentication_method: 'forms'
+lidarr_cfg_authentication_method: 'forms'
 
 # Require authentication for all addresses?
 #
@@ -89,7 +89,7 @@ lidarr_config_authentication_method: 'forms'
 # addresses access WITHOUT authentication.
 #
 # Default: False.
-lidarr_config_authentication_required: false
+lidarr_cfg_authentication_required: false
 
 # Lidarr API key.
 #
@@ -97,10 +97,10 @@ lidarr_config_authentication_required: false
 # value is deterministic.
 #
 # Special Case:
-#   '': random 32 character alphanumeric hash
+#   '': Random 32 character alphanumeric hash
 #
 # Default: '{RANDOM}' (insecure idempotent API key based on hostname).
-lidarr_config_api_key:
+lidarr_cfg_api_key:
   '{{ inventory_hostname | md5 | truncate(32, true, "") }}'
 
 ###############################################################################
@@ -110,15 +110,15 @@ lidarr_config_api_key:
 # Lidarr service log level.
 #
 # Values:
-#    info: standard logging (default).
-#   debug: log additional information.
-#   trace: log everything.
+#    info: Standard logging (default).
+#   debug: Log additional information.
+#   trace: Log everything.
 #
 # Default: 'info'.
-lidarr_config_log_level: 'info'
+lidarr_cfg_log_level: 'info'
 
 # Max log size before archiving (MB). Default: 1.
-lidarr_config_log_size_limit: 1
+lidarr_cfg_log_size_limit: 1
 
 ###############################################################################
 # Settings > General > Analytics
@@ -130,7 +130,7 @@ lidarr_config_log_size_limit: 1
 # runtime versions. Used to prioritize features and bug fixes.
 #
 # Default: False.
-lidarr_config_analytics_enabled: false
+lidarr_cfg_analytics_enabled: false
 
 ###############################################################################
 # Settings > General > Updates (config.xml)
@@ -139,8 +139,8 @@ lidarr_config_analytics_enabled: false
 # Lidarr update branch to use.
 #
 # Values:
-#    master: stable release (default).
-#   develop: beta/unstable - bleeding edge. may NOT be able to go back to main
+#    master: Stable release (default).
+#   develop: Beta/unstable - bleeding edge. may NOT be able to go back to main
 #            after switching to this branch.  It is released as soon as code is
 #            committed and passes all automated tests. This build may have not
 #            been used by us or other users yet. There is no guarantee that it
@@ -154,25 +154,25 @@ lidarr_config_analytics_enabled: false
 #
 # Reference:
 # * https://wiki.servarr.com/lidarr/faq#how-do-i-update-lidarr
-lidarr_config_branch: 'master'
+lidarr_cfg_branch: 'master'
 
 # Automatically download and install updates? Default: False.
-lidarr_config_update_automatically: false
+lidarr_cfg_update_automatically: false
 
 # Automatic update mechanism.
 #
 # Non-docker installs only support BuiltIn or Script.
 #
 # Values:
-#    True: use internal update mechanism (BuiltIn) (default).
-#   False: use external update script (Script); requires
-#             sonnar_config_update_script_path.
+#    True: Use internal update mechanism (BuiltIn) (default).
+#   False: Use external update script (Script); requires
+#          lidarr_cfg_update_script_path.
 #
 # Default: True.
 #
 # Reference:
 # * https://wiki.servarr.com/lidarr/settings#updates
-lidarr_config_update_mechanism: true
+lidarr_cfg_update_mechanism: true
 
 # Docker, External, Built-in, Script
 
@@ -182,13 +182,13 @@ lidarr_config_update_mechanism: true
 # the update process.
 #
 # Sourced from ansible controller; automatically placed in
-# lidarr_service_data_dir/update_script with correct permissions. Lidarr will
+# lidarr_srv_config_dir/update_script with correct permissions. Lidarr will
 # be automatically configured to use the installed location.
 #
-# lidarr_config_update_script_path: 'host_vars/nzb.example.com/data/script.sh'
+# lidarr_cfg_update_script_path: 'host_vars/nzb.example.com/data/script.sh'
 #
 # Default: '' (disabled).
-lidarr_config_update_script_path: ''
+lidarr_cfg_update_script_path: ''
 
 ###############################################################################
 # Settings > General > Startup (config.xml)
@@ -200,7 +200,7 @@ lidarr_config_update_script_path: ''
 # used to be in settings > general > startup.
 #
 # Default: False.
-lidarr_config_launch_browser: false
+lidarr_cfg_launch_browser: false
 
 ###############################################################################
 # Settings > UI > Style
@@ -209,9 +209,9 @@ lidarr_config_launch_browser: false
 # Lidarr WebUI theme.
 #
 # Values:
-#    auto: use OS theme (default).
-#   light: light mode.
-#    dark: dark mode.
+#    auto: Use OS theme (default).
+#   light: Light mode.
+#    dark: Dark mode.
 #
 # Default: 'auto'.
-lidarr_config_theme: 'auto'
+lidarr_cfg_theme: 'auto'

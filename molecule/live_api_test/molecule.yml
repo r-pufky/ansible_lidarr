@@ -36,8 +36,8 @@ provisioner:
   inventory:
     group_vars:
       all:
-        lidarr_media_root_folders: ['/data/media']
-        lidarr_config_api_key: 'abcdef1234567890abcdef1234567890'
+        lidarr_srv_media_root_folders: ['/data/media']
+        lidarr_cfg_api_key: 'abcdef1234567890abcdef1234567890'
         lidarr_live_api_enable: false
 platforms:
   - name: 'lidarr-debian-12-live_api_test'

@@ -1,0 +1,516 @@
+---
+# yamllint disable rule:line-length
+###############################################################################
+# Annotate User Configuration
+###############################################################################
+# Sanitize (standardize with default values if not set) Lidarr configuration.
+#
+# Lidarr does not consistently apply casing to XML settings and are frequently
+# mis-spelled, inconsistently spelled, ordered, or strings used for boolean
+# values; so we have to explicitly map those settings to the equivalent role
+# settings. Order does not matter but will change based on WebUI usage and what
+# values were changed last. This can lead to 'changed' configurations when no
+# values were actually changed.
+#
+# A necessary evil given the limitations of argument_spec:
+# * Strong validation and sanitization of user input.
+# * Annotated variable providing context and rendering hints.
+# * Logic updates centrally located in tasks.
+# * Simplified role updates for variable changes.
+# * All data touched by user is in a standard, expected format.
+#
+# Annotated Defaults:
+# _{VAR}: dict - Annotated and sanitized default variable.
+#   section: str - Section name.
+#   key: str - Config file key.
+#   raw: any - Raw config file value (set from defaults > role defaults).
+#   parsed: any - Processed raw config file value. Optional.
+#   role: any - Role specific config usage. Optional.
+#   hint: str - Value rendering type hint (docstring types).
+#   added: str - Release version variable added.
+#       Special Case:
+#         0.0.0: Unknown or since role inception.
+#   sensitive: bool - True for PII/SPII data that should not be logged.
+#   deprecated: bool - True if no longer used in current role release.
+#   order: int - Order item should appear in rendered files.
+#
+# Generates:
+#   _lidarr_map: list of dict - Annotated config map.
+#   _lidarr_order: list of str - Config section order.
+#
+# Reference:
+# * https://lidarr.audio/
+# * https://wiki.servarr.com/lidarr
+# * https://github.com/Lidarr/Lidarr/releases
+# * https://github.com/Servarr/Wiki/blob/master/servarr/servarr-install-script.sh
+# yamllint enable rule:line-length
+
+# TODO(2.12.4+): Remove variable renaming check on next major Lidarr release.
+- name: 'Annotate | check deprecated variable usage'
+  when: >
+    hostvars[inventory_hostname] | dict2items |
+    selectattr("key", "match", "lidarr_config_*") | length > 0 or
+    hostvars[inventory_hostname] | dict2items |
+    selectattr("key", "match", "lidarr_service_*") | length > 0
+  ansible.builtin.fail:
+    msg: |
+      ✘ Role variables have migrated. Read defaults and update.
+
+      lidarr_config_* -> lidarr_cfg_*
+      lidarr_service_* -> lidarr_srv_*
+      lidarr_* -> lidarr_srv_*
+
+- name: 'Annotate | sanitize & annotate service defaults'
+  ansible.builtin.set_fact:
+    _lidarr_srv_version: {
+      section: '',
+      key: '',
+      raw: '{{ lidarr_srv_version | default(lidarr_role_validate_version) }}',
+      hint: 'str',
+      added: '0.0.0',
+      sensitive: false,
+      deprecated: false,
+      order: 1,
+    }
+    _lidarr_srv_delete_old_versions_enable: {
+      section: '',
+      key: '',
+      raw: '{{
+        lidarr_srv_delete_old_versions_enable | default(true)
+      }}',
+      hint: 'bool',
+      added: '0.0.0',
+      sensitive: false,
+      deprecated: false,
+      order: 2,
+    }
+    _lidarr_srv_config_dir: {
+      section: '',
+      key: '',
+      raw: '{{ lidarr_srv_config_dir | default("/data/lidarr/config") }}',
+      parsed: '{{
+        lidarr_srv_config_dir | default("/data/lidarr/config")
+        if
+        (lidarr_srv_config_dir | default("/data/lidarr/config")).endswith("/")
+        else
+        lidarr_srv_config_dir | default("/data/lidarr/config") ~ "/"
+      }}',
+      hint: 'str',
+      added: '0.0.0',
+      sensitive: false,
+      deprecated: false,
+      order: 3,
+    }
+    _lidarr_srv_u_mask: {
+      section: '',
+      key: '',
+      raw: '{{ lidarr_srv_u_mask | default("0002") }}',
+      hint: 'str',
+      added: '0.0.0',
+      sensitive: false,
+      deprecated: false,
+      order: 4,
+    }
+    _lidarr_srv_force_overwrite: {
+      section: '',
+      key: '',
+      raw: '{{ lidarr_srv_force_overwrite | default(false) }}',
+      hint: 'bool',
+      added: '0.0.0',
+      sensitive: false,
+      deprecated: false,
+      order: 5,
+    }
+    _lidarr_srv_migrate_metadata: {
+      section: '',
+      key: '',
+      raw: '{{ lidarr_srv_migrate_metadata | default(true) }}',
+      hint: 'bool',
+      added: '0.0.0',
+      sensitive: false,
+      deprecated: false,
+      order: 6,
+    }
+    _lidarr_srv_permissions_recursive_enable: {
+      section: '',
+      key: '',
+      raw: '{{ lidarr_srv_permissions_recursive_enable | default(false) }}',
+      hint: 'bool',
+      added: '0.0.0',
+      sensitive: false,
+      deprecated: false,
+      order: 7,
+    }
+    _lidarr_srv_restart_daily_enable: {
+      section: '',
+      key: '',
+      raw: '{{ lidarr_srv_restart_daily_enable | default(true) }}',
+      hint: 'bool',
+      added: '0.0.0',
+      sensitive: false,
+      deprecated: false,
+      order: 8,
+    }
+    _lidarr_srv_force_config_only_enable: {
+      section: '',
+      key: '',
+      raw: '{{ lidarr_srv_force_config_only_enable | default(false) }}',
+      hint: 'bool',
+      added: '0.0.0',
+      sensitive: false,
+      deprecated: false,
+      order: 9,
+    }
+    _lidarr_srv_user: {
+      section: '',
+      key: '',
+      raw: '{{ lidarr_srv_user | default("media") }}',
+      parsed: '',  # Updated with UID when determined in prep.
+      hint: 'str',
+      added: '0.0.0',
+      sensitive: false,
+      deprecated: false,
+      order: 10,
+    }
+    _lidarr_srv_group: {
+      section: '',
+      key: '',
+      raw: '{{ lidarr_srv_group | default("media") }}',
+      parsed: '',  # Updated with UID when determined in prep.
+      hint: 'str',
+      added: '0.0.0',
+      sensitive: false,
+      deprecated: false,
+      order: 11,
+    }
+    _lidarr_srv_create_user: {
+      section: '',
+      key: '',
+      raw: '{{ lidarr_srv_create_user | default(true) }}',
+      hint: 'bool',
+      added: '0.0.0',
+      sensitive: false,
+      deprecated: false,
+      order: 12,
+    }
+    _lidarr_srv_media_root_folders: {
+      section: '',
+      key: '',
+      raw: '{{ lidarr_srv_media_root_folders | default([]) }}',
+      hint: 'list of str',
+      added: '0.0.0',
+      sensitive: false,
+      deprecated: false,
+      order: 13,
+    }
+    _lidarr_srv_user_data_manage_enable: {
+      section: '',
+      key: '',
+      raw: '{{ lidarr_srv_user_data_manage_enable | default(false) }}',
+      hint: 'bool',
+      added: '0.0.0',
+      sensitive: false,
+      deprecated: false,
+      order: 14,
+    }
+    _lidarr_srv_media_perms_folder: {
+      section: '',
+      key: '',
+      raw: '{{ lidarr_srv_media_perms_folder | default("0755") }}',
+      hint: 'str',
+      added: '0.0.0',
+      sensitive: false,
+      deprecated: false,
+      order: 15,
+    }
+    _lidarr_srv_media_set_perms_file_enable: {
+      section: '',
+      key: '',
+      raw: '{{ lidarr_srv_media_set_perms_file_enable | default(false) }}',
+      hint: 'bool',
+      added: '0.0.0',
+      sensitive: false,
+      deprecated: false,
+      order: 16,
+    }
+    _lidarr_srv_media_perms_file: {
+      section: '',
+      key: '',
+      raw: '{{ lidarr_srv_media_perms_file | default("0644") }}',
+      hint: 'str',
+      added: '0.0.0',
+      sensitive: false,
+      deprecated: false,
+      order: 17,
+    }
+
+- name: 'Annotate | sanitize & annotate config defaults'
+  ansible.builtin.set_fact:
+    _lidarr_cfg_bind_address: {
+      section: 'General',
+      key: 'BindAddress',
+      raw: '{{ lidarr_cfg_bind_address | default("*") }}',
+      hint: 'str',
+      added: '0.0.0',
+      sensitive: false,
+      deprecated: false,
+      order: 1,
+    }
+    _lidarr_cfg_port: {
+      section: 'General',
+      key: 'Port',
+      raw: '{{ lidarr_cfg_port | default(8686) }}',
+      hint: 'int',
+      added: '0.0.0',
+      sensitive: false,
+      deprecated: false,
+      order: 2,
+    }
+    _lidarr_cfg_url_base: {
+      section: 'General',
+      key: 'UrlBase',
+      raw: '{{ lidarr_cfg_url_base | default("") }}',
+      hint: 'str',
+      added: '0.0.0',
+      sensitive: false,
+      deprecated: false,
+      order: 3,
+    }
+    _lidarr_cfg_instance_name: {
+      section: 'General',
+      key: 'InstanceName',
+      raw: '{{ lidarr_cfg_instance_name | default("Lidarr") }}',
+      hint: 'str',
+      added: '0.0.0',
+      sensitive: false,
+      deprecated: false,
+      order: 4,
+    }
+    _lidarr_cfg_enable_ssl: {
+      section: 'General',
+      key: 'EnableSsl',
+      raw: '{{ lidarr_cfg_enable_ssl | default(false) }}',
+      hint: 'bool',
+      added: '0.0.0',
+      sensitive: false,
+      deprecated: false,
+      order: 5,
+    }
+    _lidarr_cfg_ssl_port: {
+      section: 'General',
+      key: 'SslPort',
+      raw: '{{ lidarr_cfg_ssl_port | default(6868) }}',
+      hint: 'int',
+      added: '0.0.0',
+      sensitive: false,
+      deprecated: false,
+      order: 6,
+    }
+    _lidarr_cfg_ssl_cert_path: {
+      section: 'General',
+      key: 'SslCertPath',
+      raw: '{{ lidarr_cfg_ssl_cert_path | default("") }}',
+      parsed: '',  # Updated after initial set.
+      role: '',  # Updated after initial set.
+      hint: 'str',
+      added: '0.0.0',
+      sensitive: false,
+      deprecated: false,
+      order: 7,
+    }
+    _lidarr_cfg_ssl_cert_password: {
+      section: 'General',
+      key: 'SslCertPassword',
+      raw: '{{ lidarr_cfg_ssl_cert_password | default("") }}',
+      hint: 'str',
+      added: '0.0.0',
+      sensitive: true,
+      deprecated: false,
+      order: 8,
+    }
+    # TODO(V4): lidarr_cfg_authentication_method switches from 'none' to
+    #     'eternal' on V4 codebase sync.
+    _lidarr_cfg_authentication_method: {
+      section: 'General',
+      key: 'AuthenticationMethod',
+      raw: '{{
+          lidarr_cfg_authentication_method | default("Forms") | capitalize
+      }}',
+      hint: 'str',
+      added: '0.0.0',
+      sensitive: false,
+      deprecated: false,
+      order: 9,
+    }
+    _lidarr_cfg_authentication_required: {
+      section: 'General',
+      key: 'AuthenticationRequired',
+      raw: '{{ lidarr_cfg_authentication_required | default(false) }}',
+      parsed: '{{
+          "Enabled"
+          if lidarr_cfg_authentication_required | default(false) else
+          "DisabledForLocalAddresses"
+      }}',
+      hint: 'str',
+      added: '0.0.0',
+      sensitive: false,
+      deprecated: false,
+      order: 10,
+    }
+    _lidarr_cfg_api_key: {
+      section: 'General',
+      key: 'ApiKey',
+      raw: '{{
+          lidarr_cfg_api_key |
+          default(inventory_hostname | md5 | truncate(32, true, ""))
+      }}',
+      hint: 'str',
+      added: '0.0.0',
+      sensitive: true,
+      deprecated: false,
+      order: 11,
+    }
+    _lidarr_cfg_log_level: {
+      section: 'General',
+      key: 'LogLevel',
+      raw: '{{ lidarr_cfg_log_level | default("info") | lower }}',
+      hint: 'str',
+      added: '0.0.0',
+      sensitive: false,
+      deprecated: false,
+      order: 12,
+    }
+    _lidarr_cfg_log_size_limit: {
+      section: 'General',
+      key: 'LogSizeLimit',
+      raw: '{{ lidarr_cfg_log_size_limit | default(1) }}',
+      hint: 'int',
+      added: '0.0.0',
+      sensitive: false,
+      deprecated: false,
+      order: 13,
+    }
+    _lidarr_cfg_analytics_enabled: {
+      section: 'General',
+      key: 'AnalyticsEnabled',
+      raw: '{{ lidarr_cfg_analytics_enabled | default(false) }}',
+      hint: 'bool',
+      added: '0.0.0',
+      sensitive: false,
+      deprecated: false,
+      order: 14,
+    }
+    _lidarr_cfg_branch: {
+      section: 'General',
+      key: 'Branch',
+      raw: '{{ lidarr_cfg_branch | default("master") | lower }}',
+      hint: 'str',
+      added: '0.0.0',
+      sensitive: false,
+      deprecated: false,
+      order: 15,
+    }
+    _lidarr_cfg_update_automatically: {
+      section: 'General',
+      key: 'UpdateAutomatically',
+      raw: '{{ lidarr_cfg_update_automatically | default(false) }}',
+      hint: 'bool',
+      added: '0.0.0',
+      sensitive: false,
+      deprecated: false,
+      order: 16,
+    }
+    _lidarr_cfg_update_mechanism: {
+      section: 'General',
+      key: 'UpdateMechanism',
+      raw: '{{ lidarr_cfg_update_mechanism | default(true) }}',
+      parsed: '{{
+          "BuiltIn"
+          if lidarr_cfg_update_mechanism | default(true) else
+          "Script"
+      }}',
+      hint: 'bool',
+      added: '0.0.0',
+      sensitive: false,
+      deprecated: false,
+      order: 17,
+    }
+    _lidarr_cfg_update_script_path: {
+      section: 'General',
+      key: 'UpdateScriptPath',
+      raw: '{{ lidarr_cfg_update_script_path | default("") }}',
+      parsed: '',  # Updated after initial set.
+      role: '',  # Updated after initial set.
+      hint: 'str',
+      added: '0.0.0',
+      sensitive: false,
+      deprecated: false,
+      order: 18,
+    }
+    _lidarr_cfg_launch_browser: {
+      section: 'General',
+      key: 'LaunchBrowser',
+      raw: '{{ lidarr_cfg_launch_browser | default(false) }}',
+      hint: 'bool',
+      added: '0.0.0',
+      sensitive: false,
+      deprecated: false,
+      order: 19,
+    }
+    _lidarr_cfg_theme: {
+      section: 'UI',
+      key: 'Theme',
+      raw: '{{ lidarr_cfg_theme | default("auto") | lower }}',
+      hint: 'str',
+      added: '0.0.0',
+      sensitive: false,
+      deprecated: false,
+      order: 1,
+    }
+
+- name: 'Annotate | update annotations with results'
+  ansible.builtin.set_fact:
+    _lidarr_cfg_ssl_cert_path: '{{
+      _lidarr_cfg_ssl_cert_path |
+      combine({"parsed":
+          _lidarr_srv_config_dir.parsed ~ "lidarr.pfx"
+          if _lidarr_cfg_enable_ssl.raw else
+          ""
+        })
+      }}'
+    _lidarr_cfg_update_script_path: '{{
+      _lidarr_cfg_update_script_path |
+      combine({"parsed":
+          _lidarr_srv_config_dir.parsed ~ "update_script"
+          if not _lidarr_cfg_update_mechanism.raw else
+          ""
+        })
+      }}'
+
+- name: 'Annotate | generate role settings'
+  ansible.builtin.set_fact:
+    _lidarr_srv_migrate_metadata: '{{
+      _lidarr_srv_migrate_metadata |
+      combine({"role":
+          lidarr_role_repo_extract_migrate_files
+          if not _lidarr_srv_migrate_metadata.raw else
+          lidarr_role_repo_extract_migrate_files + ["MediaCover"]})
+        }}'
+    _lidarr_cfg_ssl_cert_path: '{{
+        _lidarr_cfg_ssl_cert_path |
+        combine({"role": _lidarr_srv_config_dir.parsed ~ "lidarr.pfx"})
+      }}'
+    _lidarr_cfg_update_script_path: '{{
+        _lidarr_cfg_update_script_path |
+        combine({"role": _lidarr_srv_config_dir.parsed ~ "update_script"})
+      }}'
+
+- name: 'Annotate | generate config map'
+  ansible.builtin.set_fact:
+    _lidarr_map: '{{
+        hostvars[inventory_hostname] | dict2items |
+        selectattr("key", "match", "_lidarr_cfg_*")
+      }}'
+    _lidarr_order:
+      - 'General'
+      - 'UI'

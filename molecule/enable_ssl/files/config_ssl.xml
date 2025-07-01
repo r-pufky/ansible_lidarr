@@ -5,7 +5,7 @@
   <InstanceName>Lidarr</InstanceName>
   <EnableSsl>True</EnableSsl>
   <SslPort>6868</SslPort>
-  <SslCertPath>/var/lib/lidarr/lidarr.pfx</SslCertPath>
+  <SslCertPath>/data/lidarr/config/lidarr.pfx</SslCertPath>
   <SslCertPassword>test</SslCertPassword>
   <AuthenticationMethod>Forms</AuthenticationMethod>
   <AuthenticationRequired>DisabledForLocalAddresses</AuthenticationRequired>

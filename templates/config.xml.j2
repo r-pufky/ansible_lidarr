@@ -1,5 +1,15 @@
 <Config>
-{% for key, value in _lidarr_config.items() %}
-  <{{ key }}>{{ value }}</{{ key}}>
+{% for header in _lidarr_order %}
+{%   for section in _lidarr_map | selectattr("value.section", "match", header) | sort(attribute="value.order") %}
+{%     if not section.value.deprecated %}
+{%       if section.value.key in ['AuthenticationRequired', 'UpdateMechanism', 'SslCertPath', 'UpdateScriptPath'] %}
+  <{{ section.value.key }}>{{ section.value.parsed }}</{{ section.value.key }}>
+{%       elif section.value.hint == 'bool' %}
+  <{{ section.value.key }}>{{ section.value.raw | string | capitalize }}</{{ section.value.key }}>
+{%       else %}
+  <{{ section.value.key }}>{{ section.value.raw }}</{{ section.value.key }}>
+{%       endif %}
+{%     endif %}
+{%   endfor %}
 {% endfor %}
 </Config>

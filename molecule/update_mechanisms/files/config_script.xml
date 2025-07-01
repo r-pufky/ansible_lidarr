@@ -16,7 +16,7 @@
   <Branch>master</Branch>
   <UpdateAutomatically>False</UpdateAutomatically>
   <UpdateMechanism>Script</UpdateMechanism>
-  <UpdateScriptPath>/var/lib/lidarr/update_script</UpdateScriptPath>
+  <UpdateScriptPath>/data/lidarr/config/update_script</UpdateScriptPath>
   <LaunchBrowser>False</LaunchBrowser>
   <Theme>auto</Theme>
 </Config>

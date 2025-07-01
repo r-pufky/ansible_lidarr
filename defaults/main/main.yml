@@ -1,31 +1,41 @@
 ---
-# yamllint disable rule:line-length
 ###############################################################################
 # Lidarr Service Configuration
 ###############################################################################
 # Existing databases are migrated automatically when new versions are
-# installed.
-
-# Version.
+# installed. Migration between database platforms is not supported and must be
+# done manually.
 #
-# Older versions (<2) are not supported. Set repo_host_access_token if github
-# API is rate limited. See r_pufky.deb.repo.
+# Set repo_host_access_token if API is rate limited. See r_pufky.deb.repo.
+
+# Lidarr Release.
+#
+# Versions (Schematic):
+#       MAJOR: Unsafe - requires major role changes; only default MAJOR version
+#              is supported. See other branches if they exist.
+#       MINOR: Safe - Usually requires no role updates. Changes usually
+#              constrained to internal changes requiring no config file or
+#              dependency changes.
+#       PATCH: Safe - Usually requires no role updates.
+#   RECOMMEND: Only increment PATCH. Never use 'latest'.
 #
 # Values:
-#   {VERSION}: Tagged release to use ('v2.9.6.4552').
+#   {VERSION}: Tagged release to use ('v2.12.4.4658').
 #      latest: Use latest stable release.
 #
-# Default: 'latest'.
-lidarr_service_version: 'latest'
+# Default: 'v2.12.4.4658'.
+lidarr_srv_version: 'v2.12.4.4658'
 
 # Remove old installs on upgrade success? Default: True.
-lidarr_service_delete_old_versions_enable: true
+lidarr_srv_delete_old_versions_enable: true
 
-# Absolute path to database and metadata location. Default: '/var/lib/lidarr'.
-lidarr_service_data_dir: '/var/lib/lidarr'
+# Absolute path to database and metadata location.
+#
+# Default: '/data/lidarr/config'.
+lidarr_srv_config_dir: '/data/lidarr/config'
 
 # Service Umask. Default: '0002'.
-lidarr_service_u_mask: '0002'
+lidarr_srv_u_mask: '0002'
 
 # Force overwrite existing install?
 #
@@ -35,7 +45,7 @@ lidarr_service_u_mask: '0002'
 # directories (if any). Any user data in these directories are DESTROYED.
 #
 # Default: False.
-lidarr_service_force_overwrite: false
+lidarr_srv_force_overwrite: false
 
 # Migrate metadata (MediaCover) directory?
 #
@@ -43,7 +53,7 @@ lidarr_service_force_overwrite: false
 # version if not migrated with databases.
 #
 # Default: True.
-lidarr_service_migrate_metadata: true
+lidarr_srv_migrate_metadata: true
 
 # Recursively set metadata permissions?
 #
@@ -51,7 +61,7 @@ lidarr_service_migrate_metadata: true
 # slow.
 #
 # Default: False.
-lidarr_service_permissions_recursive_enable: false
+lidarr_srv_permissions_recursive_enable: false
 
 # Automatically restart Lidarr daily?
 #
@@ -59,22 +69,24 @@ lidarr_service_permissions_recursive_enable: false
 # updates.
 #
 # Default: True.
-lidarr_service_restart_daily_enable: true
+lidarr_srv_restart_daily_enable: true
 
 # Only apply configuration?
 #
 # Reduces role application time by ONLY applying configuration changes. Does
-# NOT affect lidarr_media_set_perms_file_enable.
+# NOT affect lidarr_srv_media_set_perms_file_enable.
 #
 # This should ONLY be used after the role has been fully run once.
 #
 # Useful when adding a change without reconfiguring the whole system or
 # checking and installing a new version. Suggest applying with extra options:
 #
-#   ansible-playbook site.yml --tags Lidarr -e 'lidarr_service_force_config_only_enable=true'
+#   ansible-playbook site.yml
+#       --tags Lidarr
+#       -e 'lidarr_srv_media_set_perms_file_enable=true'
 #
 # Default: False.
-lidarr_service_force_config_only_enable: false
+lidarr_srv_force_config_only_enable: false
 
 ###############################################################################
 # Lidarr User
@@ -82,24 +94,24 @@ lidarr_service_force_config_only_enable: false
 
 # User that Lidarr will run under.
 #
-# Enable lidarr_create_user if this account is not externally managed.
+# Enable lidarr_srv_create_user if this account is not externally managed.
 #
 # Default: 'media'.
-lidarr_user: 'media'
+lidarr_srv_user: 'media'
 
 # Group that Lidarr will run under.
 #
-# Enable lidarr_create_user if this group is not externally managed.
+# Enable lidarr_srv_create_user if this group is not externally managed.
 #
 # Default: 'media'.
-lidarr_group: 'media'
+lidarr_srv_group: 'media'
 
-# Create lidarr_user, lidarr_group if not detected?
+# Create lidarr_srv_user, lidarr_srv_group if not detected?
 #
 # Applied via r_pufky.deb.users, see vars/main.yml for default user attributes.
 #
 # Default: True.
-lidarr_create_user: true
+lidarr_srv_create_user: true
 
 ###############################################################################
 # Media Permissions
@@ -107,34 +119,50 @@ lidarr_create_user: true
 
 # Root media storage folders.
 #
-# Folders will be created/set with lidarr_user, lidarr_group,
-# lidarr_media_perms_folder.
+# Folders will be created/set with lidarr_srv_user, lidarr_srv_group,
+# lidarr_srv_media_perms_folder.
 #
 # Default: [].
-lidarr_media_root_folders: []
+lidarr_srv_media_root_folders: []
+
+# Enable user management of data/media files?
+#
+# Use lidarr_srv_user to execute data/media management commands. Role
+# applies media permissions using 'root' by default. For mounted data locations
+# (NFS with squashed mounts, mapped container mounts, etc) the local root user
+# will not have sufficient privileges to modify these files.
+#
+# Applies to:
+# * lidarr_srv_config_dir
+# * lidarr_srv_media_root_folders
+#
+# Default: False.
+lidarr_srv_user_data_manage_enable: false
 
 # Media folder permissions octal.
 #
-# Media folders specified by lidarr_media_root_folders will always be
-# recursively set using lidarr_media_perms_folder, lidarr_user, and
-# lidarr_group.
+# Media folders specified by lidarr_srv_media_root_folders will always be
+# recursively set using lidarr_srv_media_perms_folder, lidarr_srv_user, and
+# lidarr_srv_group.
 #
 # Default: '0755'.
-lidarr_media_perms_folder: '0755'
+lidarr_srv_media_perms_folder: '0755'
 
 # Enable setting of media file permissions?
 #
-# Set file permissions within lidarr_media_root_folders using
-# lidarr_media_perms_file, lidarr_user, and lidarr_group. Large sets of files
-# may be slow to set permissions.
+# Set file permissions within lidarr_srv_media_root_folders using
+# lidarr_srv_media_perms_file, lidarr_srv_user, and lidarr_srv_group. Large
+# sets of files may be slow to set permissions.
 #
 # Useful when first configuring to ensure service has access to all specified
 # media locations. Suggest applying with extra options:
 #
-#   ansible-playbook site.yml --tags Lidarr -e 'lidarr_media_set_perms_file_enable=true'
+#   ansible-playbook site.yml
+#       --tags Lidarr
+#       -e 'lidarr_srv_media_set_perms_file_enable=true'
 #
 # Default: False.
-lidarr_media_set_perms_file_enable: false
+lidarr_srv_media_set_perms_file_enable: false
 
 # Media file permissions octal. Default: '0644'.
-lidarr_media_perms_file: '0644'
+lidarr_srv_media_perms_file: '0644'

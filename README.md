@@ -29,13 +29,13 @@ permissions will be set to ensure Lidarr can read files.
   roles:
      - 'r_pufky.lidarr'
   vars:
-    lidarr_service_version: 'latest'
-    lidarr_config_api_key: '{{ vault_lidarr_api_key }}'
-    lidarr_config_update_automatically: true
-    lidarr_config_theme: 'dark'
-    lidarr_media_root_folders:
+    lidarr_srv_version: 'latest'
+    lidarr_cfg_api_key: '{{ vault_lidarr_api_key }}'
+    lidarr_cfg_update_automatically: true
+    lidarr_cfg_theme: 'dark'
+    lidarr_srv_media_root_folders:
       - '/data/media'
-    lidarr_media_set_perms_file_enable: true
+    lidarr_srv_media_set_perms_file_enable: true
 ```
 
 ### Initial Deployment with No User
@@ -44,7 +44,7 @@ toggled on after the user exists in the database . Suggest running initial role
 application temporarily disabling this option:
 
 ``` bash
-ansible-playbook lidarr.yml -e 'lidarr_config_authentication_method=none'
+ansible-playbook lidarr.yml -e 'lidarr_cfg_authentication_method=none'
 ```
 
 ## Development

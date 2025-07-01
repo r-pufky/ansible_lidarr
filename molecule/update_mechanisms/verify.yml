@@ -1,80 +1,62 @@
 ---
-- name: 'Update mechanisms | verify'
-  hosts: 'all'
-  gather_facts: false
-  tasks:
-    - name: 'Update mechanisms | verify | gather service status'
-      ansible.builtin.service_facts:
-
-    # Lidarr will fail if configuration is bad (r_pufky.deb.systemd)
-    - name: 'Update mechanisms | verify | assert lidarr.service active'
-      ansible.builtin.assert:
-        quiet: true
-        that:
-          - '"lidarr.service" in ansible_facts.services'
-          - 'ansible_facts["services"]["lidarr.service"]["state"] == "running"'
-        fail_msg: '✘ lidarr.service should be enabled and running.'
-
-- name: 'Update mechanisms | verify | script enabled'
+- name: 'Verify | script enabled'
   hosts: 'lidarr-debian-12-update_mechanisms'
   gather_facts: false
   tasks:
-    - name: 'Update mechanisms | verify | script enabled | config.xml'
+    - name: 'Verify | script enabled | config.xml'
       ansible.builtin.include_role:
         name: 'r_pufky.lib.tests'
         tasks_from: 'copy.yml'
       vars:
         test_name: 'Enable SSL | verify | script enabled | config.xml'
         test_src: 'files/config_script.xml'
-        test_file: '/var/lib/lidarr/config.xml'
+        test_file: '/data/lidarr/config/config.xml'
         test_owner: 'media'
         test_group: 'media'
         test_mode: '0600'
+        test_diff: true
 
-    - name: >-
-        Update mechanisms | verify | script enabled |
-        /var/lib/lidarr/update_script
+    - name: 'Verify | script enabled | /data/lidarr/config/update_script'
       ansible.builtin.include_role:
         name: 'r_pufky.lib.tests'
         tasks_from: 'file.yml'
       vars:
-        test_name: >-
-          Update mechanisms | verify | script enabled |
-          /var/lib/lidarr/update_script
-        test_file: '/var/lib/lidarr/update_script'
+        test_name:
+          'Verify | script enabled | /data/lidarr/config/update_script'
+        test_file: '/data/lidarr/config/update_script'
         test_owner: 'media'
         test_group: 'media'
         test_mode: '0750'
         test_state: 'file'
+        test_diff: true
 
-- name: 'Update mechanisms | verify | script toggled'
+- name: 'Verify | script toggled'
   hosts: 'lidarr-debian-12-update_mechanisms-toggle'
   gather_facts: false
   tasks:
-    - name: 'Update mechanisms | verify | script toggled | config.xml'
+    - name: 'Verify | script toggled | config.xml'
       ansible.builtin.include_role:
         name: 'r_pufky.lib.tests'
         tasks_from: 'copy.yml'
       vars:
-        test_name: 'Update mechanisms | verify | script toggled | config.xml'
+        test_name: 'Verify | script toggled | config.xml'
         test_src: 'files/config_toggle.xml'
-        test_file: '/var/lib/lidarr/config.xml'
+        test_file: '/data/lidarr/config/config.xml'
         test_owner: 'media'
         test_group: 'media'
         test_mode: '0600'
+        test_diff: true
 
-    - name: >-
-        Update mechanisms | verify | script toggled |
-        /var/lib/lidarr/update_script
+    - name: 'Verify | script toggled | /data/lidarr/config/update_script'
       ansible.builtin.include_role:
         name: 'r_pufky.lib.tests'
         tasks_from: 'file.yml'
       vars:
-        test_name: >-
-          Update mechanisms | verify | script toggled |
-          /var/lib/lidarr/update_script
-        test_file: '/var/lib/lidarr/update_script'
+        test_name:
+          'Verify | script toggled | /data/lidarr/config/update_script'
+        test_file: '/data/lidarr/config/update_script'
         test_owner: '{{ omit }}'
         test_group: '{{ omit }}'
         test_mode: '{{ omit }}'
         test_state: 'absent'
+        test_diff: true

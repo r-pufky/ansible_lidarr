@@ -1,76 +1,69 @@
 ---
-- name: 'Live API test | verify'
+- name: 'Verify'
   hosts: 'all'
   gather_facts: false
   tasks:
-    - name: 'Live API test | verify | gather service status'
-      ansible.builtin.service_facts:
-
-    - name: 'Live API test | verify | config.xml'
+    - name: 'Verify | config.xml'
       ansible.builtin.include_role:
         name: 'r_pufky.lib.tests'
         tasks_from: 'copy.yml'
       vars:
-        test_name: 'Live API test | verify | config.xml'
+        test_name: 'Verify | config.xml'
         test_src: 'files/config.xml'
-        test_file: '/var/lib/lidarr/config.xml'
+        test_file: '/data/lidarr/config/config.xml'
         test_owner: 'media'
         test_group: 'media'
         test_mode: '0600'
+        test_diff: true
 
-    # Lidarr will fail if configuration is bad (r_pufky.deb.systemd)
-    - name: 'Live API test | verify | assert lidarr.service active'
-      ansible.builtin.assert:
-        quiet: true
-        that:
-          - '"lidarr.service" in ansible_facts.services'
-          - 'ansible_facts["services"]["lidarr.service"]["state"] == "running"'
-        fail_msg: '✘ lidarr.service should be enabled and running.'
-
-    - name: 'Live API test | verify | /var/lib/lidarr'
+    - name: 'Verify | /data/lidarr/config'
       ansible.builtin.include_role:
         name: 'r_pufky.lib.tests'
         tasks_from: 'file.yml'
       vars:
-        test_name: 'Live API test | verify | /var/lib/lidarr'
-        test_file: '/var/lib/lidarr'
+        test_name: 'Verify | /data/lidarr/config'
+        test_file: '/data/lidarr/config'
         test_owner: 'media'
         test_group: 'media'
         test_mode: '0775'
         test_state: 'directory'
+        test_diff: true
 
-    - name: 'Live API test | verify | /var/lib/lidarr/update_script'
+    - name: 'Verify | /data/lidarr/config/update_script'
       ansible.builtin.include_role:
         name: 'r_pufky.lib.tests'
         tasks_from: 'file.yml'
       vars:
-        test_name: 'Live API test | verify | /var/lib/lidarr/update_script'
-        test_file: '/var/lib/lidarr/update_script'
+        test_name: 'Verify | /data/lidarr/config/update_script'
+        test_file: '/data/lidarr/config/update_script'
         test_owner: '{{ omit }}'
         test_group: '{{ omit }}'
         test_mode: '{{ omit }}'
         test_state: 'absent'
+        test_diff: true
 
-    - name: 'Live API test | verify | /var/lib/lidarr/lidarr.pfx'
+    - name: 'Verify | /data/lidarr/config/lidarr.pfx'
       ansible.builtin.include_role:
         name: 'r_pufky.lib.tests'
         tasks_from: 'file.yml'
       vars:
-        test_name: 'Live API test | verify | /var/lib/lidarr/lidarr.pfx'
-        test_file: '/var/lib/lidarr/lidarr.pfx'
+        test_name: 'Verify | /data/lidarr/config/lidarr.pfx'
+        test_file: '/data/lidarr/config/lidarr.pfx'
         test_owner: '{{ omit }}'
         test_group: '{{ omit }}'
         test_mode: '{{ omit }}'
         test_state: 'absent'
+        test_diff: true
 
-    - name: 'Live API test | verify | /data/media'
+    - name: 'Verify | /data/media'
       ansible.builtin.include_role:
         name: 'r_pufky.lib.tests'
         tasks_from: 'file.yml'
       vars:
-        test_name: 'Live API test | verify | /data/media'
+        test_name: 'Verify | /data/media'
         test_file: '/data/media'
         test_owner: 'media'
         test_group: 'media'
         test_mode: '0755'
         test_state: 'directory'
+        test_diff: true

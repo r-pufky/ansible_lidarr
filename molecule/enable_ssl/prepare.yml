@@ -13,39 +13,38 @@
 # * https://superuser.com/questions/226192/avoid-password-prompt-for-keys-and-prompts-for-dn-information
 # yamllint enable rule:line-length
 
-- name: 'Enable SSL | prepare'
+- name: 'Prepare'
   hosts: 127.0.0.1
   connection: local
   gather_facts: false
   tasks:
-    - name: 'Enable SSL | prepare | generate cache location'
+    - name: 'Prepare | generate cache location'
       ansible.builtin.set_fact:
         _test_cache:
           '{{ lookup("env", "MOLECULE_PROJECT_DIRECTORY") }}/molecule/cache'
 
-    - name: 'Enable SSL | prepare | create cache'
+    - name: 'Prepare | create cache'
       ansible.builtin.include_role:
         name: 'r_pufky.lib.tests'
         tasks_from: 'create_cache.yml'
       vars:
-        test_name: 'Enable SSL | prepare | create cache'
+        test_name: 'Prepare | create cache'
 
-    - name: 'Enable SSL | prepare | cache 2.9.6.4552'
+    - name: 'Prepare | cache 2.12.4.4658'
       ansible.builtin.include_role:
         name: 'r_pufky.lib.tests'
         tasks_from: 'cache_url.yml'
       vars:
-        test_name: 'Enable SSL | prepare | cache 2.9.6.4552'
-        test_dest: 'Lidarr.master.2.9.6.4552.linux-core-x64.tar.gz'
+        test_name: 'Prepare | cache 2.12.4.4658'
+        test_dest: 'Lidarr.master.2.12.4.4658.linux-core-x64.tar.gz'
         test_url: '{{
             "https://github.com/Lidarr/Lidarr/releases/download/" ~
-            "v2.9.6.4552/" ~
-            "Lidarr.master.2.9.6.4552.linux-core-x64.tar.gz"
+            "v2.12.4.4658/" ~
+            "Lidarr.master.2.12.4.4658.linux-core-x64.tar.gz"
           }}'
         test_mode: '0640'
 
-
-    - name: 'Enable SSL | prepare | generate test certificate'
+    - name: 'Prepare | generate test certificate'
       ansible.builtin.command:
         argv:
           - 'openssl'
@@ -62,7 +61,7 @@
           - '{{ _test_cache }}/test.csr'
         creates: '{{ _test_cache }}/test.key'
 
-    - name: 'Enable SSL | prepare | sign test certificate'
+    - name: 'Prepare | sign test certificate'
       ansible.builtin.command:
         argv:
           - 'openssl'
@@ -79,7 +78,7 @@
           - '{{ _test_cache }}/test.pem'
         creates: '{{ _test_cache }}/test.pem'
 
-    - name: 'Enable SSL | prepare | pack PFX certificate'
+    - name: 'Prepare | pack PFX certificate'
       ansible.builtin.command:
         argv:
           - 'openssl'
