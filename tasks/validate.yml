@@ -5,8 +5,14 @@
 # Start Lidarr services and confirm they are active and running.
 
 - name: 'Validate | start services'
-  notify: 'Handlers | restart lidarr'
-  ansible.builtin.meta: 'flush_handlers'
+  ansible.builtin.systemd:
+    name: '{{ item }}'
+    enabled: true
+    daemon_reload: true
+    state: 'started'
+  failed_when: false
+  loop:
+    - 'lidarr.service'
 
 - name: 'Validate | query service status'
   ansible.builtin.service_facts:
