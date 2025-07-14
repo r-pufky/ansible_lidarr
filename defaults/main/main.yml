@@ -6,6 +6,10 @@
 # installed. Migration between database platforms is not supported and must be
 # done manually.
 #
+# Install size: ~270MB
+#     Lidarr: ~230MB.
+#   Packages: ~38.6MB.
+#
 # Set repo_host_access_token if API is rate limited. See r_pufky.deb.repo.
 
 # Lidarr Release.
