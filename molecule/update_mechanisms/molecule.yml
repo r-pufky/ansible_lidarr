@@ -5,7 +5,7 @@
 # Verify update scripts are deployed and executed correctly.
 #
 # Tests:
-# * /var/lib/lidarr/update_script exists.
+# * /data/lidarr/update_script exists.
 # * toggling script update on, then off removes update_script.
 
 dependency:

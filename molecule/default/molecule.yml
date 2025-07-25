@@ -8,11 +8,11 @@
 # Tests:
 # * config.xml set.
 # * lidarr.service active and running.
-# * /var/lib/lidarr created with correct permissions.
+# * /data/lidarr created with correct permissions.
 # * /data/media created with correct permissions.
 # * /data/media - file permissions recursively set with correct permissions.
-# * /var/lib/lidarr/update_script does not exist.
-# * /var/lib/lidarr/lidarr.pfx does not exist.
+# * /data/lidarr/update_script does not exist.
+# * /data/lidarr/lidarr.pfx does not exist.
 
 dependency:
   name: 'galaxy'

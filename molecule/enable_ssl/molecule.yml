@@ -5,10 +5,10 @@
 # SSL is enabled and toggled correctly.
 #
 # Tests:
-# * /var/lib/lidarr/lidarr.pfx exists.
+# * /data/lidarr/lidarr.pfx exists.
 # * toggling ssl on, then off removes lidarr.pfx.
 #   <EnableSsl>False</EnableSsl>  # true requires ssl_cert
-#   <SslCertPath>/var/lib/lidarr/snakeoil.pfx</SslCertPath>
+#   <SslCertPath>/data/lidarr/snakeoil.pfx</SslCertPath>
 #   <SslCertPassword>testing</SslCertPassword>  # stored plaintext.
 # * lidarr_cfg_enable_ssl -- test when false w and w/o cert
 

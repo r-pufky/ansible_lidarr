@@ -1,6 +1,6 @@
 <Config>
 {% for header in _lidarr_order %}
-{%   for section in _lidarr_map | selectattr("value.section", "match", header) | sort(attribute="value.order") %}
+{%   for section in _lidarr_map | selectattr('value.section', '==', header) | sort(attribute='value.order') %}
 {%     if not section.value.deprecated %}
 {%       if section.value.key in ['AuthenticationRequired', 'UpdateMechanism', 'SslCertPath', 'UpdateScriptPath'] %}
   <{{ section.value.key }}>{{ section.value.parsed }}</{{ section.value.key }}>
