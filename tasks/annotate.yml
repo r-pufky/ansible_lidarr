@@ -19,20 +19,21 @@
 # * Simplified role updates for variable changes.
 # * All data touched by user is in a standard, expected format.
 #
-# Annotated Defaults:
+# Annotated Defaults (2.0):
 # _{VAR}: dict - Annotated and sanitized default variable.
 #   section: str - Section name.
 #   key: str - Config file key.
-#   raw: any - Raw config file value (set from defaults > role defaults).
-#   parsed: any - Processed raw config file value. Optional.
-#   role: any - Role specific config usage. Optional.
+#   raw: any - Raw value from user, defaults, or role defaults.
+#   data: any - Processed raw value for use in rendering. Optional.
+#   default: any - Role default (testing for changed defaults).
 #   hint: str - Value rendering type hint (docstring types).
+#   role_*: any - Role specific usage. Optional.
 #   added: str - Release version variable added.
 #       Special Case:
 #         0.0.0: Unknown or since role inception.
 #   sensitive: bool - True for PII/SPII data that should not be logged.
 #   deprecated: bool - True if no longer used in current role release.
-#   order: int - Order item should appear in rendered files.
+#   order: int - Order item should appear in templated files.
 #
 # Generates:
 #   _lidarr_map: list of dict - Annotated config map.
@@ -60,12 +61,15 @@
       lidarr_service_* -> lidarr_srv_*
       lidarr_* -> lidarr_srv_*
 
+      DB files MUST be manually migrated if lidarr_srv_config_dir changed.
+
 - name: 'Annotate | sanitize & annotate service defaults'
   ansible.builtin.set_fact:
     _lidarr_srv_version: {
       section: '',
       key: '',
-      raw: '{{ lidarr_srv_version | default(lidarr_role_validate_version) }}',
+      raw: '{{ lidarr_srv_version }}',
+      default: '{{ lidarr_role_validate_version }}',
       hint: 'str',
       added: '0.0.0',
       sensitive: false,
@@ -75,9 +79,8 @@
     _lidarr_srv_delete_old_versions_enable: {
       section: '',
       key: '',
-      raw: '{{
-        lidarr_srv_delete_old_versions_enable | default(true)
-      }}',
+      raw: '{{ lidarr_srv_delete_old_versions_enable }}',
+      default: true,
       hint: 'bool',
       added: '0.0.0',
       sensitive: false,
@@ -87,14 +90,9 @@
     _lidarr_srv_config_dir: {
       section: '',
       key: '',
-      raw: '{{ lidarr_srv_config_dir | default("/data/lidarr/config") }}',
-      parsed: '{{
-        lidarr_srv_config_dir | default("/data/lidarr/config")
-        if
-        (lidarr_srv_config_dir | default("/data/lidarr/config")).endswith("/")
-        else
-        lidarr_srv_config_dir | default("/data/lidarr/config") ~ "/"
-      }}',
+      raw: '{{ lidarr_srv_config_dir }}',
+      data: "{{ lidarr_srv_config_dir | regex_replace('\\/$', '') ~ '/' }}",
+      default: '/data/lidarr/config',
       hint: 'str',
       added: '0.0.0',
       sensitive: false,
@@ -104,7 +102,8 @@
     _lidarr_srv_u_mask: {
       section: '',
       key: '',
-      raw: '{{ lidarr_srv_u_mask | default("0002") }}',
+      raw: '{{ lidarr_srv_u_mask }}',
+      default: '0002',
       hint: 'str',
       added: '0.0.0',
       sensitive: false,
@@ -114,7 +113,8 @@
     _lidarr_srv_force_overwrite: {
       section: '',
       key: '',
-      raw: '{{ lidarr_srv_force_overwrite | default(false) }}',
+      raw: '{{ lidarr_srv_force_overwrite }}',
+      default: false,
       hint: 'bool',
       added: '0.0.0',
       sensitive: false,
@@ -124,7 +124,13 @@
     _lidarr_srv_migrate_metadata: {
       section: '',
       key: '',
-      raw: '{{ lidarr_srv_migrate_metadata | default(true) }}',
+      raw: '{{ lidarr_srv_migrate_metadata }}',
+      role_files: '{{
+          lidarr_role_repo_extract_migrate_files
+          if not lidarr_srv_migrate_metadata else
+          lidarr_role_repo_extract_migrate_files + ["MediaCover"]
+        }}',
+      default: true,
       hint: 'bool',
       added: '0.0.0',
       sensitive: false,
@@ -134,7 +140,8 @@
     _lidarr_srv_permissions_recursive_enable: {
       section: '',
       key: '',
-      raw: '{{ lidarr_srv_permissions_recursive_enable | default(false) }}',
+      raw: '{{ lidarr_srv_permissions_recursive_enable }}',
+      default: false,
       hint: 'bool',
       added: '0.0.0',
       sensitive: false,
@@ -144,7 +151,8 @@
     _lidarr_srv_restart_daily_enable: {
       section: '',
       key: '',
-      raw: '{{ lidarr_srv_restart_daily_enable | default(true) }}',
+      raw: '{{ lidarr_srv_restart_daily_enable }}',
+      default: true,
       hint: 'bool',
       added: '0.0.0',
       sensitive: false,
@@ -154,7 +162,8 @@
     _lidarr_srv_force_config_only_enable: {
       section: '',
       key: '',
-      raw: '{{ lidarr_srv_force_config_only_enable | default(false) }}',
+      raw: '{{ lidarr_srv_force_config_only_enable }}',
+      default: false,
       hint: 'bool',
       added: '0.0.0',
       sensitive: false,
@@ -164,9 +173,10 @@
     _lidarr_srv_user: {
       section: '',
       key: '',
-      raw: '{{ lidarr_srv_user | default("media") }}',
-      parsed: '',  # Updated with UID when determined in prep.
+      raw: '{{ lidarr_srv_user }}',
+      default: 'media',
       hint: 'str',
+      role_uid: '',  # (str) UID.
       added: '0.0.0',
       sensitive: false,
       deprecated: false,
@@ -175,9 +185,10 @@
     _lidarr_srv_group: {
       section: '',
       key: '',
-      raw: '{{ lidarr_srv_group | default("media") }}',
-      parsed: '',  # Updated with UID when determined in prep.
+      raw: '{{ lidarr_srv_group }}',
+      default: 'media',
       hint: 'str',
+      role_gid: '',  # (str) GID.
       added: '0.0.0',
       sensitive: false,
       deprecated: false,
@@ -186,7 +197,8 @@
     _lidarr_srv_create_user: {
       section: '',
       key: '',
-      raw: '{{ lidarr_srv_create_user | default(true) }}',
+      raw: '{{ lidarr_srv_create_user }}',
+      default: true,
       hint: 'bool',
       added: '0.0.0',
       sensitive: false,
@@ -196,7 +208,8 @@
     _lidarr_srv_media_root_folders: {
       section: '',
       key: '',
-      raw: '{{ lidarr_srv_media_root_folders | default([]) }}',
+      raw: '{{ lidarr_srv_media_root_folders }}',
+      default: [],
       hint: 'list of str',
       added: '0.0.0',
       sensitive: false,
@@ -206,7 +219,8 @@
     _lidarr_srv_user_data_manage_enable: {
       section: '',
       key: '',
-      raw: '{{ lidarr_srv_user_data_manage_enable | default(false) }}',
+      raw: '{{ lidarr_srv_user_data_manage_enable }}',
+      default: false,
       hint: 'bool',
       added: '0.0.0',
       sensitive: false,
@@ -216,7 +230,8 @@
     _lidarr_srv_media_perms_folder: {
       section: '',
       key: '',
-      raw: '{{ lidarr_srv_media_perms_folder | default("0755") }}',
+      raw: '{{ lidarr_srv_media_perms_folder }}',
+      default: '0755',
       hint: 'str',
       added: '0.0.0',
       sensitive: false,
@@ -226,7 +241,8 @@
     _lidarr_srv_media_set_perms_file_enable: {
       section: '',
       key: '',
-      raw: '{{ lidarr_srv_media_set_perms_file_enable | default(false) }}',
+      raw: '{{ lidarr_srv_media_set_perms_file_enable }}',
+      default: false,
       hint: 'bool',
       added: '0.0.0',
       sensitive: false,
@@ -236,7 +252,8 @@
     _lidarr_srv_media_perms_file: {
       section: '',
       key: '',
-      raw: '{{ lidarr_srv_media_perms_file | default("0644") }}',
+      raw: '{{ lidarr_srv_media_perms_file }}',
+      default: '0644',
       hint: 'str',
       added: '0.0.0',
       sensitive: false,
@@ -249,7 +266,8 @@
     _lidarr_cfg_bind_address: {
       section: 'General',
       key: 'BindAddress',
-      raw: '{{ lidarr_cfg_bind_address | default("*") }}',
+      raw: '{{ lidarr_cfg_bind_address }}',
+      default: '*',
       hint: 'str',
       added: '0.0.0',
       sensitive: false,
@@ -259,7 +277,8 @@
     _lidarr_cfg_port: {
       section: 'General',
       key: 'Port',
-      raw: '{{ lidarr_cfg_port | default(8686) }}',
+      raw: '{{ lidarr_cfg_port }}',
+      default: 8686,
       hint: 'int',
       added: '0.0.0',
       sensitive: false,
@@ -269,7 +288,8 @@
     _lidarr_cfg_url_base: {
       section: 'General',
       key: 'UrlBase',
-      raw: '{{ lidarr_cfg_url_base | default("") }}',
+      raw: '{{ lidarr_cfg_url_base }}',
+      default: '',
       hint: 'str',
       added: '0.0.0',
       sensitive: false,
@@ -279,7 +299,8 @@
     _lidarr_cfg_instance_name: {
       section: 'General',
       key: 'InstanceName',
-      raw: '{{ lidarr_cfg_instance_name | default("Lidarr") }}',
+      raw: '{{ lidarr_cfg_instance_name }}',
+      default: 'Lidarr',
       hint: 'str',
       added: '0.0.0',
       sensitive: false,
@@ -289,7 +310,8 @@
     _lidarr_cfg_enable_ssl: {
       section: 'General',
       key: 'EnableSsl',
-      raw: '{{ lidarr_cfg_enable_ssl | default(false) }}',
+      raw: '{{ lidarr_cfg_enable_ssl }}',
+      default: false,
       hint: 'bool',
       added: '0.0.0',
       sensitive: false,
@@ -299,7 +321,8 @@
     _lidarr_cfg_ssl_port: {
       section: 'General',
       key: 'SslPort',
-      raw: '{{ lidarr_cfg_ssl_port | default(6868) }}',
+      raw: '{{ lidarr_cfg_ssl_port }}',
+      default: 6868,
       hint: 'int',
       added: '0.0.0',
       sensitive: false,
@@ -309,9 +332,14 @@
     _lidarr_cfg_ssl_cert_path: {
       section: 'General',
       key: 'SslCertPath',
-      raw: '{{ lidarr_cfg_ssl_cert_path | default("") }}',
-      parsed: '',  # Updated after initial set.
-      role: '',  # Updated after initial set.
+      raw: '{{ lidarr_cfg_ssl_cert_path }}',
+      data: '{{
+          _lidarr_srv_config_dir.data ~ "lidarr.pfx"
+          if lidarr_cfg_enable_ssl else
+          ""
+        }}',
+      default: '',
+      role_dest: '{{ _lidarr_srv_config_dir.data ~ "lidarr.pfx" }}',
       hint: 'str',
       added: '0.0.0',
       sensitive: false,
@@ -321,7 +349,8 @@
     _lidarr_cfg_ssl_cert_password: {
       section: 'General',
       key: 'SslCertPassword',
-      raw: '{{ lidarr_cfg_ssl_cert_password | default("") }}',
+      raw: '{{ lidarr_cfg_ssl_cert_password }}',
+      default: '',
       hint: 'str',
       added: '0.0.0',
       sensitive: true,
@@ -333,9 +362,8 @@
     _lidarr_cfg_authentication_method: {
       section: 'General',
       key: 'AuthenticationMethod',
-      raw: '{{
-          lidarr_cfg_authentication_method | default("Forms") | capitalize
-      }}',
+      raw: '{{ lidarr_cfg_authentication_method | capitalize }}',
+      default: 'Forms',
       hint: 'str',
       added: '0.0.0',
       sensitive: false,
@@ -345,12 +373,13 @@
     _lidarr_cfg_authentication_required: {
       section: 'General',
       key: 'AuthenticationRequired',
-      raw: '{{ lidarr_cfg_authentication_required | default(false) }}',
-      parsed: '{{
+      raw: '{{ lidarr_cfg_authentication_required }}',
+      data: '{{
           "Enabled"
-          if lidarr_cfg_authentication_required | default(false) else
+          if lidarr_cfg_authentication_required else
           "DisabledForLocalAddresses"
-      }}',
+        }}',
+      default: false,
       hint: 'str',
       added: '0.0.0',
       sensitive: false,
@@ -360,10 +389,8 @@
     _lidarr_cfg_api_key: {
       section: 'General',
       key: 'ApiKey',
-      raw: '{{
-          lidarr_cfg_api_key |
-          default(inventory_hostname | md5 | truncate(32, true, ""))
-      }}',
+      raw: '{{ lidarr_cfg_api_key }}',
+      default: '{{ inventory_hostname | md5 | truncate(32, true, "") }}',
       hint: 'str',
       added: '0.0.0',
       sensitive: true,
@@ -373,7 +400,8 @@
     _lidarr_cfg_log_level: {
       section: 'General',
       key: 'LogLevel',
-      raw: '{{ lidarr_cfg_log_level | default("info") | lower }}',
+      raw: '{{ lidarr_cfg_log_level | lower }}',
+      default: 'info',
       hint: 'str',
       added: '0.0.0',
       sensitive: false,
@@ -383,7 +411,8 @@
     _lidarr_cfg_log_size_limit: {
       section: 'General',
       key: 'LogSizeLimit',
-      raw: '{{ lidarr_cfg_log_size_limit | default(1) }}',
+      raw: '{{ lidarr_cfg_log_size_limit }}',
+      default: 1,
       hint: 'int',
       added: '0.0.0',
       sensitive: false,
@@ -393,7 +422,8 @@
     _lidarr_cfg_analytics_enabled: {
       section: 'General',
       key: 'AnalyticsEnabled',
-      raw: '{{ lidarr_cfg_analytics_enabled | default(false) }}',
+      raw: '{{ lidarr_cfg_analytics_enabled }}',
+      default: false,
       hint: 'bool',
       added: '0.0.0',
       sensitive: false,
@@ -403,7 +433,8 @@
     _lidarr_cfg_branch: {
       section: 'General',
       key: 'Branch',
-      raw: '{{ lidarr_cfg_branch | default("master") | lower }}',
+      raw: '{{ lidarr_cfg_branch | lower }}',
+      default: 'master',
       hint: 'str',
       added: '0.0.0',
       sensitive: false,
@@ -413,7 +444,8 @@
     _lidarr_cfg_update_automatically: {
       section: 'General',
       key: 'UpdateAutomatically',
-      raw: '{{ lidarr_cfg_update_automatically | default(false) }}',
+      raw: '{{ lidarr_cfg_update_automatically }}',
+      default: false,
       hint: 'bool',
       added: '0.0.0',
       sensitive: false,
@@ -423,12 +455,13 @@
     _lidarr_cfg_update_mechanism: {
       section: 'General',
       key: 'UpdateMechanism',
-      raw: '{{ lidarr_cfg_update_mechanism | default(true) }}',
-      parsed: '{{
+      raw: '{{ lidarr_cfg_update_mechanism }}',
+      data: '{{
           "BuiltIn"
-          if lidarr_cfg_update_mechanism | default(true) else
+          if lidarr_cfg_update_mechanism else
           "Script"
-      }}',
+        }}',
+      default: true,
       hint: 'bool',
       added: '0.0.0',
       sensitive: false,
@@ -438,9 +471,14 @@
     _lidarr_cfg_update_script_path: {
       section: 'General',
       key: 'UpdateScriptPath',
-      raw: '{{ lidarr_cfg_update_script_path | default("") }}',
-      parsed: '',  # Updated after initial set.
-      role: '',  # Updated after initial set.
+      raw: '{{ lidarr_cfg_update_script_path }}',
+      data: '{{
+          _lidarr_srv_config_dir.data ~ "update_script"
+          if not lidarr_cfg_update_mechanism else
+          ""
+        }}',
+      default: '',
+      role_dest: '{{ _lidarr_srv_config_dir.data ~ "update_script" }}',
       hint: 'str',
       added: '0.0.0',
       sensitive: false,
@@ -450,7 +488,8 @@
     _lidarr_cfg_launch_browser: {
       section: 'General',
       key: 'LaunchBrowser',
-      raw: '{{ lidarr_cfg_launch_browser | default(false) }}',
+      raw: '{{ lidarr_cfg_launch_browser }}',
+      default: false,
       hint: 'bool',
       added: '0.0.0',
       sensitive: false,
@@ -460,50 +499,14 @@
     _lidarr_cfg_theme: {
       section: 'UI',
       key: 'Theme',
-      raw: '{{ lidarr_cfg_theme | default("auto") | lower }}',
+      raw: '{{ lidarr_cfg_theme | lower }}',
+      default: 'auto',
       hint: 'str',
       added: '0.0.0',
       sensitive: false,
       deprecated: false,
       order: 1,
     }
-
-- name: 'Annotate | update annotations with results'
-  ansible.builtin.set_fact:
-    _lidarr_cfg_ssl_cert_path: '{{
-      _lidarr_cfg_ssl_cert_path |
-      combine({"parsed":
-          _lidarr_srv_config_dir.parsed ~ "lidarr.pfx"
-          if _lidarr_cfg_enable_ssl.raw else
-          ""
-        })
-      }}'
-    _lidarr_cfg_update_script_path: '{{
-      _lidarr_cfg_update_script_path |
-      combine({"parsed":
-          _lidarr_srv_config_dir.parsed ~ "update_script"
-          if not _lidarr_cfg_update_mechanism.raw else
-          ""
-        })
-      }}'
-
-- name: 'Annotate | generate role settings'
-  ansible.builtin.set_fact:
-    _lidarr_srv_migrate_metadata: '{{
-      _lidarr_srv_migrate_metadata |
-      combine({"role":
-          lidarr_role_repo_extract_migrate_files
-          if not _lidarr_srv_migrate_metadata.raw else
-          lidarr_role_repo_extract_migrate_files + ["MediaCover"]})
-        }}'
-    _lidarr_cfg_ssl_cert_path: '{{
-        _lidarr_cfg_ssl_cert_path |
-        combine({"role": _lidarr_srv_config_dir.parsed ~ "lidarr.pfx"})
-      }}'
-    _lidarr_cfg_update_script_path: '{{
-        _lidarr_cfg_update_script_path |
-        combine({"role": _lidarr_srv_config_dir.parsed ~ "update_script"})
-      }}'
 
 - name: 'Annotate | generate config map'
   ansible.builtin.set_fact:

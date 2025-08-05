@@ -10,7 +10,7 @@
   ansible.builtin.assert:
     quiet: true
     that:
-      - _lidarr_cfg_ssl_cert_path.parsed | length > 0
+      - _lidarr_cfg_ssl_cert_path.raw | length > 0
     fail_msg: >
       ✘ lidarr_cfg_enable_ssl=true requires
       lidarr_cfg_ssl_cert_path set.
@@ -22,7 +22,7 @@
   ansible.builtin.assert:
     quiet: true
     that:
-      - _lidarr_cfg_update_script_path.parsed | length > 0
+      - _lidarr_cfg_update_script_path.raw | length > 0
     fail_msg: >
       ✘ lidarr_cfg_update_mechanism=false requires
       lidarr_cfg_update_script_path set.
@@ -49,11 +49,11 @@
   ansible.builtin.set_fact:
     _lidarr_srv_user: '{{
         _lidarr_srv_user |
-        combine({"parsed": _lidarr_srv_user_query.uid})
+        combine({"role_uid": _lidarr_srv_user_query.uid})
       }}'
     _lidarr_srv_group: '{{
         _lidarr_srv_group |
-        combine({"parsed": _lidarr_srv_user_query.group})
+        combine({"role_gid": _lidarr_srv_user_query.group})
       }}'
 
 - name: 'Prep | stop services'
