@@ -496,6 +496,96 @@
       deprecated: false,
       order: 19,
     }
+    _lidarr_cfg_database_type: {
+      section: 'database',
+      key: '',
+      raw: '{{ lidarr_cfg_database_type | lower }}',
+      default: 'sqlite',
+      role_unset: true,  # Never set in config.xml.
+      hint: 'str',
+      added: '1.1.2',
+      sensitive: false,
+      deprecated: false,
+      order: 1,
+    }
+    _lidarr_cfg_database_host: {
+      section: 'database',
+      key: 'PostgresHost',
+      raw: '{{ lidarr_cfg_database_host }}',
+      default: 'localhost',
+      role_unset:
+        '{{ true if lidarr_cfg_database_type == "sqlite" else false }}',
+      hint: 'str',
+      added: '1.1.2',
+      sensitive: false,
+      deprecated: false,
+      order: 2,
+    }
+    _lidarr_cfg_database_port: {
+      section: 'database',
+      key: 'PostgresPort',
+      raw: '{{ lidarr_cfg_database_port }}',
+      default: 5432,
+      role_unset:
+        '{{ true if lidarr_cfg_database_type == "sqlite" else false }}',
+      hint: 'int',
+      added: '1.1.2',
+      sensitive: false,
+      deprecated: false,
+      order: 3,
+    }
+    _lidarr_cfg_database_user: {
+      section: 'database',
+      key: 'PostgresUser',
+      raw: '{{ lidarr_cfg_database_user }}',
+      default: 'lidarr',
+      role_unset:
+        '{{ true if lidarr_cfg_database_type == "sqlite" else false }}',
+      hint: 'str',
+      added: '1.1.2',
+      sensitive: false,
+      deprecated: false,
+      order: 4,
+    }
+    _lidarr_cfg_database_password: {
+      section: 'database',
+      key: 'PostgresPassword',
+      raw: '{{ lidarr_cfg_database_password }}',
+      default: '',
+      role_unset:
+        '{{ true if lidarr_cfg_database_type == "sqlite" else false }}',
+      hint: 'str',
+      added: '1.1.2',
+      sensitive: true,
+      deprecated: false,
+      order: 5,
+    }
+    _lidarr_cfg_database_main: {
+      section: 'database',
+      key: 'PostgresMainDb',
+      raw: '{{ lidarr_cfg_database_main }}',
+      default: 'lidarr-main',
+      role_unset:
+        '{{ true if lidarr_cfg_database_type == "sqlite" else false }}',
+      hint: 'str',
+      added: '1.1.2',
+      sensitive: false,
+      deprecated: false,
+      order: 6,
+    }
+    _lidarr_cfg_database_log: {
+      section: 'database',
+      key: 'PostgresLogDb',
+      raw: '{{ lidarr_cfg_database_log }}',
+      default: 'lidarr-log',
+      role_unset:
+        '{{ true if lidarr_cfg_database_type == "sqlite" else false }}',
+      hint: 'str',
+      added: '1.1.2',
+      sensitive: false,
+      deprecated: false,
+      order: 7,
+    }
     _lidarr_cfg_theme: {
       section: 'UI',
       key: 'Theme',
@@ -516,4 +606,5 @@
       }}'
     _lidarr_order:
       - 'General'
+      - 'database'
       - 'UI'

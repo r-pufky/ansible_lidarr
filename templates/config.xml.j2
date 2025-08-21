@@ -1,7 +1,11 @@
 <Config>
 {% for header in _lidarr_order %}
 {%   for section in _lidarr_map | selectattr('value.section', '==', header) | sort(attribute='value.order') %}
-{%     if not section.value.deprecated %}
+{%     if header == 'database' %}
+{%       if not section.value.role_unset %}
+  <{{ section.value.key }}>{{ section.value.raw }}</{{ section.value.key }}>
+{%       endif %}
+{%     elif not section.value.deprecated %}
 {%       if section.value.key in ['AuthenticationRequired', 'UpdateMechanism', 'SslCertPath', 'UpdateScriptPath'] %}
   <{{ section.value.key }}>{{ section.value.data }}</{{ section.value.key }}>
 {%       elif section.value.hint == 'bool' %}

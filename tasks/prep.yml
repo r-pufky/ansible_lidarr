@@ -5,6 +5,27 @@
 # *arr services use the same codebase; any bugs or fixes should be checked for
 # all related services.
 
+- name: 'Prep | assert database requirements'
+  when: _lidarr_cfg_database_type.raw == 'postgres'
+  ansible.builtin.assert:
+    quiet: true
+    that:
+      - _lidarr_cfg_database_host.raw | length > 0
+      - _lidarr_cfg_database_port.raw > 0
+      - _lidarr_cfg_database_user.raw | length > 0
+      - _lidarr_cfg_database_password.raw | length > 0
+      - _lidarr_cfg_database_main.raw | length > 0
+      - _lidarr_cfg_database_log.raw | length > 0
+    fail_msg: >
+      ✘ lidarr_cfg_database_type=postgres requires all options set.
+
+          lidarr_cfg_database_host: '{{ _lidarr_cfg_database_host.raw }}'
+          lidarr_cfg_database_port: '{{ _lidarr_cfg_database_port.raw }}'
+          lidarr_cfg_database_user: '{{ _lidarr_cfg_database_user.raw }}'
+      lidarr_cfg_database_password: '{{ _lidarr_cfg_database_password.raw }}'
+          lidarr_cfg_database_main: '{{ _lidarr_cfg_database_main.raw }}'
+           lidarr_cfg_database_log: '{{ _lidarr_cfg_database_log.raw }}'
+
 - name: 'Prep | assert SSL requirements'
   when: _lidarr_cfg_enable_ssl.raw
   ansible.builtin.assert:

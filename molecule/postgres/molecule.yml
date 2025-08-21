@@ -1,0 +1,86 @@
+---
+###############################################################################
+# Default
+###############################################################################
+# Default configuration is deployed successfully using postgres. Configuration
+# should succeed with and without lidarr_srv_user_data_manage_enable.
+#
+# Tests:
+# * config.xml set.
+# * lidarr.service active and running.
+# * /data/lidarr created with correct permissions.
+# * /data/media created with correct permissions.
+# * /data/media - file permissions recursively set with correct permissions.
+# * /data/lidarr/update_script does not exist.
+# * /data/lidarr/lidarr.pfx does not exist.
+# * Postgres backed instance launches correctly.
+
+dependency:
+  name: 'galaxy'
+driver:
+  name: 'podman'
+provisioner:
+  name: 'ansible'
+  config_options:
+    defaults:
+      interpreter_python: 'auto_silent'
+      callback_whitelist: 'profile_tasks, timer, yaml'
+    ssh_connection:
+      pipelining: false
+  inventory:
+    group_vars:
+      all:
+        lidarr_srv_media_root_folders: ['/data/media']
+        lidarr_cfg_api_key: 'abcdef1234567890abcdef1234567890'
+        repo_testing_enable: true
+        repo_testing_versions:
+          - comment: 'default'
+            version: 'v2.12.4.4658'
+            asset: '{{
+                lookup("env", "MOLECULE_PROJECT_DIRECTORY") ~
+                "/molecule/cache/" ~
+                "Lidarr.master.2.12.4.4658.linux-core-x64.tar.gz"
+              }}'
+        lidarr_cfg_database_type: 'postgres'
+        lidarr_cfg_database_host: 'localhost'
+        lidarr_cfg_database_password: 'test'
+    host_vars:
+      lidarr-debian-12-user_data:
+        lidarr_srv_user_data_manage_enable: true
+platforms:
+  - name: 'lidarr-debian-12-postgres'
+    image: 'ghcr.io/hifis-net/debian-systemd:12'
+    systemd: 'always'
+    volumes:
+      - '/sys/fs/cgroup:/sys/fs/cgroup:ro'
+    command: '/lib/systemd/systemd'
+    pre_build_image: true
+    published_ports:
+      - '8686/tcp'
+  - name: 'lidarr-debian-12-postgres_user_data'
+    image: 'ghcr.io/hifis-net/debian-systemd:12'
+    systemd: 'always'
+    volumes:
+      - '/sys/fs/cgroup:/sys/fs/cgroup:ro'
+    command: '/lib/systemd/systemd'
+    pre_build_image: true
+verifier:
+  name: 'ansible'
+lint: |
+  set -e
+  yamllint .
+  ansible-lint .
+scenario:
+  test_sequence:
+    # - 'dependency'
+    # - 'cleanup'
+    - 'destroy'
+    - 'syntax'
+    - 'create'
+    - 'prepare'
+    - 'converge'
+    # - 'idempotence'  # Files created, extracted, created, deleted.
+    # - 'side_effect'
+    - 'verify'
+    # - 'cleanup'
+    - 'destroy'

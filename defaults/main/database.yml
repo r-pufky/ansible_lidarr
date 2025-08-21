@@ -1,0 +1,63 @@
+---
+###############################################################################
+# Lidarr Database Options
+###############################################################################
+# Existing databases are migrated automatically when new versions are
+# installed. Migration between database platforms is not supported and must be
+# done manually.
+
+# Database backend.
+#
+# Values:
+#   postgres: Postgres 14+. HIGHLY recommended.
+#     sqlite: Sqlite3 (default).
+#
+# Default: 'sqlite'.
+lidarr_cfg_database_type: 'sqlite'
+
+###############################################################################
+# PostgreSQL Database Options
+###############################################################################
+# Postgres requires pre-existing databases with root privileges to initialize
+# tables and manage migrations. Postgres databases are NOT backed up by Lidarr.
+#
+# Manual Migration Overview:
+# * Create postgres databases.
+# * systemctl stop lidarr
+# * sqlite3 lidarr.db vacuum
+# * Update config.xml with DB settings (or re-apply role with postgres).
+# * systemctl start lidarr
+# * Confirm lidarr running (appears empty).
+# * systemctl stop lidarr
+# * cp lidarr.db postgres:/tmp
+# * chmod o+r /tmp/lidarr.db
+# * Install pgloader to /usr/local/bin
+# * Login to postgres: psql -d lidarr
+# * Remove auto-generated tables (see reference).
+# * Execute pgloader. Use 'prefetch rows' and 'batch size' options.
+#   * Many WARNINGS may appear; these can be ignored.
+# * systemctl start lidarr
+# * No migrations have needed post migration steps in practice.
+# * Backup and remove sqlite3 database files.
+#
+# Reference:
+# * https://wiki.servarr.com/en/lidarr/postgres-setup
+# * https://github.com/Roxedus/Pgloader-bin
+
+# Database host. Default: 'localhost'.
+lidarr_cfg_database_host: 'localhost'
+
+# Database port. Default: 5432.
+lidarr_cfg_database_port: 5432
+
+# Database user. Default: 'lidarr'.
+lidarr_cfg_database_user: 'lidarr'
+
+# Database password. Default: ''.
+lidarr_cfg_database_password: ''
+
+# Main database name. Default: 'lidarr-main'.
+lidarr_cfg_database_main: 'lidarr-main'
+
+# Log database name. Default: 'lidarr-log'.
+lidarr_cfg_database_log: 'lidarr-log'
