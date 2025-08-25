@@ -1,6 +1,6 @@
 ---
 - name: 'Verify | SSL enabled'
-  hosts: 'lidarr-debian-12-enable_ssl'
+  hosts: 'lidarr-debian-13-enable_ssl'
   gather_facts: false
   tasks:
     - name: 'Verify | SSL enabled | config.xml'
@@ -30,7 +30,7 @@
         test_diff: true
 
 - name: 'Verify | SSL toggled'
-  hosts: 'lidarr-debian-12-enable_ssl-toggle'
+  hosts: 'lidarr-debian-13-enable_ssl-toggle'
   gather_facts: false
   tasks:
     - name: 'Verify | SSL toggled | config.xml'

@@ -41,11 +41,11 @@ provisioner:
                 "Lidarr.master.2.12.4.4658.linux-core-x64.tar.gz"
               }}'
     host_vars:
-      lidarr-debian-12-user_data:
+      lidarr-debian-13-user_data:
         lidarr_srv_user_data_manage_enable: true
 platforms:
-  - name: 'lidarr-debian-12-default'
-    image: 'ghcr.io/hifis-net/debian-systemd:12'
+  - name: 'lidarr-debian-13-default'
+    image: 'ghcr.io/hifis-net/debian-systemd:13'
     systemd: 'always'
     volumes:
       - '/sys/fs/cgroup:/sys/fs/cgroup:ro'
@@ -53,8 +53,8 @@ platforms:
     pre_build_image: true
     published_ports:
       - '8686/tcp'
-  - name: 'lidarr-debian-12-user_data'
-    image: 'ghcr.io/hifis-net/debian-systemd:12'
+  - name: 'lidarr-debian-13-user_data'
+    image: 'ghcr.io/hifis-net/debian-systemd:13'
     systemd: 'always'
     volumes:
       - '/sys/fs/cgroup:/sys/fs/cgroup:ro'

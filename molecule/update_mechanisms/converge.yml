@@ -8,7 +8,7 @@
         name: 'r_pufky.srv.lidarr'
 
 - name: 'Converge | toggle updates'
-  hosts: 'lidarr-debian-12-update_mechanisms-toggle'
+  hosts: 'lidarr-debian-13-update_mechanisms-toggle'
   gather_facts: false
   tasks:
     - name: 'Converge | toggle updates | apply r_pufky.srv.lidarr'

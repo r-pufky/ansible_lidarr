@@ -1,6 +1,6 @@
 ---
 - name: 'Verify | script enabled'
-  hosts: 'lidarr-debian-12-update_mechanisms'
+  hosts: 'lidarr-debian-13-update_mechanisms'
   gather_facts: false
   tasks:
     - name: 'Verify | script enabled | config.xml'
@@ -31,7 +31,7 @@
         test_diff: true
 
 - name: 'Verify | script toggled'
-  hosts: 'lidarr-debian-12-update_mechanisms-toggle'
+  hosts: 'lidarr-debian-13-update_mechanisms-toggle'
   gather_facts: false
   tasks:
     - name: 'Verify | script toggled | config.xml'

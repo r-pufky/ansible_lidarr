@@ -46,23 +46,6 @@
 # * https://github.com/Servarr/Wiki/blob/master/servarr/servarr-install-script.sh
 # yamllint enable rule:line-length
 
-# TODO(2.12.4+): Remove variable renaming check on next major Lidarr release.
-- name: 'Annotate | check deprecated variable usage'
-  when: >
-    hostvars[inventory_hostname] | dict2items |
-    selectattr("key", "match", "lidarr_config_*") | length > 0 or
-    hostvars[inventory_hostname] | dict2items |
-    selectattr("key", "match", "lidarr_service_*") | length > 0
-  ansible.builtin.fail:
-    msg: |
-      ✘ Role variables have migrated. Read defaults and update.
-
-      lidarr_config_* -> lidarr_cfg_*
-      lidarr_service_* -> lidarr_srv_*
-      lidarr_* -> lidarr_srv_*
-
-      DB files MUST be manually migrated if lidarr_srv_config_dir changed.
-
 - name: 'Annotate | sanitize & annotate service defaults'
   ansible.builtin.set_fact:
     _lidarr_srv_version: {

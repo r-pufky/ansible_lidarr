@@ -8,7 +8,7 @@
         name: 'r_pufky.srv.lidarr'
 
 - name: 'Converge | toggle SSL'
-  hosts: 'lidarr-debian-12-enable_ssl-toggle'
+  hosts: 'lidarr-debian-13-enable_ssl-toggle'
   gather_facts: false
   tasks:
     - name: 'Converge | toggle SSL | apply r_pufky.srv.lidarr'

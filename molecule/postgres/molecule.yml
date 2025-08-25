@@ -45,11 +45,11 @@ provisioner:
         lidarr_cfg_database_host: 'localhost'
         lidarr_cfg_database_password: 'test'
     host_vars:
-      lidarr-debian-12-user_data:
+      lidarr-debian-13-user_data:
         lidarr_srv_user_data_manage_enable: true
 platforms:
-  - name: 'lidarr-debian-12-postgres'
-    image: 'ghcr.io/hifis-net/debian-systemd:12'
+  - name: 'lidarr-debian-13-postgres'
+    image: 'ghcr.io/hifis-net/debian-systemd:13'
     systemd: 'always'
     volumes:
       - '/sys/fs/cgroup:/sys/fs/cgroup:ro'
@@ -57,8 +57,8 @@ platforms:
     pre_build_image: true
     published_ports:
       - '8686/tcp'
-  - name: 'lidarr-debian-12-postgres_user_data'
-    image: 'ghcr.io/hifis-net/debian-systemd:12'
+  - name: 'lidarr-debian-13-postgres_user_data'
+    image: 'ghcr.io/hifis-net/debian-systemd:13'
     systemd: 'always'
     volumes:
       - '/sys/fs/cgroup:/sys/fs/cgroup:ro'
