@@ -340,8 +340,6 @@
       deprecated: false,
       order: 8,
     }
-    # TODO(V4): lidarr_cfg_authentication_method switches from 'none' to
-    #     'eternal' on V4 codebase sync.
     _lidarr_cfg_authentication_method: {
       section: 'General',
       key: 'AuthenticationMethod',

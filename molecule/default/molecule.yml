@@ -34,11 +34,11 @@ provisioner:
         repo_testing_enable: true
         repo_testing_versions:
           - comment: 'default'
-            version: 'v2.12.4.4658'
+            version: 'v2.13.3.4711'
             asset: '{{
                 lookup("env", "MOLECULE_PROJECT_DIRECTORY") ~
                 "/molecule/cache/" ~
-                "Lidarr.master.2.12.4.4658.linux-core-x64.tar.gz"
+                "Lidarr.master.2.13.3.4711.linux-core-x64.tar.gz"
               }}'
     host_vars:
       lidarr-debian-13-user_data:

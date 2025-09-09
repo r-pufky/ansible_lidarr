@@ -30,17 +30,17 @@
       vars:
         test_name: 'Prepare | create cache'
 
-    - name: 'Prepare | cache 2.12.4.4658'
+    - name: 'Prepare | cache 2.13.3.4711'
       ansible.builtin.include_role:
         name: 'r_pufky.lib.tests'
         tasks_from: 'cache_url.yml'
       vars:
-        test_name: 'Prepare | cache 2.12.4.4658'
-        test_dest: 'Lidarr.master.2.12.4.4658.linux-core-x64.tar.gz'
+        test_name: 'Prepare | cache 2.13.3.4711'
+        test_dest: 'Lidarr.master.2.13.3.4711.linux-core-x64.tar.gz'
         test_url: '{{
             "https://github.com/Lidarr/Lidarr/releases/download/" ~
-            "v2.12.4.4658/" ~
-            "Lidarr.master.2.12.4.4658.linux-core-x64.tar.gz"
+            "v2.13.3.4711/" ~
+            "Lidarr.master.2.13.3.4711.linux-core-x64.tar.gz"
           }}'
         test_mode: '0640'
 

@@ -72,7 +72,7 @@ lidarr_cfg_ssl_cert_password: ''
 #     ansible-playbook lidarr.yml -e 'lidarr_cfg_authentication_method=none'
 #
 # Values:
-#       none: Force user creation and auth selection WebUI (first run only).
+#   external: Force user creation and auth selection WebUI (first run only).
 #             basic or forms must be used after first run.
 #      basic: Browser pop-up for credentials.
 #      forms: Login page for credentials (use for password managers) (default).
