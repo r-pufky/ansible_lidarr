@@ -14,8 +14,8 @@
 - name: 'Config | set {{ _lidarr_srv_config_dir.raw }}'
   ansible.builtin.file:
     path: '{{ _lidarr_srv_config_dir.raw }}'
-    owner: '{{ _lidarr_srv_user.role_uid }}'
-    group: '{{ _lidarr_srv_group.role_gid }}'
+    owner: '{{ _lidarr_srv_user._uid }}'
+    group: '{{ _lidarr_srv_group._gid }}'
     mode: '0775'
     recurse: '{{ _lidarr_srv_permissions_recursive_enable.raw }}'
     state: 'directory'
@@ -31,39 +31,39 @@
   when: _lidarr_cfg_enable_ssl.raw
   ansible.builtin.copy:
     src: '{{ _lidarr_cfg_ssl_cert_path.raw }}'
-    dest: '{{ _lidarr_cfg_ssl_cert_path.role_dest }}'
-    owner: '{{ _lidarr_srv_user.role_uid }}'
-    group: '{{ _lidarr_srv_group.role_gid }}'
+    dest: '{{ _lidarr_cfg_ssl_cert_path._dest }}'
+    owner: '{{ _lidarr_srv_user._uid }}'
+    group: '{{ _lidarr_srv_group._gid }}'
     mode: '0640'
     force: true
 
-- name: 'Config | remove {{ _lidarr_cfg_ssl_cert_path.role_dest }}'
+- name: 'Config | remove {{ _lidarr_cfg_ssl_cert_path._dest }}'
   when: not _lidarr_cfg_enable_ssl.raw
   ansible.builtin.file:
-    dest: '{{ _lidarr_cfg_ssl_cert_path.role_dest }}'
+    dest: '{{ _lidarr_cfg_ssl_cert_path._dest }}'
     state: 'absent'
 
 - name: 'Config | set {{ _lidarr_cfg_update_script_path.raw }}'
   when: not _lidarr_cfg_update_mechanism.raw
   ansible.builtin.copy:
     src: '{{ _lidarr_cfg_update_script_path.raw }}'
-    dest: '{{ _lidarr_cfg_update_script_path.role_dest }}'
-    owner: '{{ _lidarr_srv_user.role_uid }}'
-    group: '{{ _lidarr_srv_group.role_gid }}'
+    dest: '{{ _lidarr_cfg_update_script_path._dest }}'
+    owner: '{{ _lidarr_srv_user._uid }}'
+    group: '{{ _lidarr_srv_group._gid }}'
     mode: '0750'
     force: true
 
-- name: 'Config | remove {{ _lidarr_cfg_update_script_path.role_dest }}'
+- name: 'Config | remove {{ _lidarr_cfg_update_script_path._dest }}'
   when: _lidarr_cfg_update_mechanism.raw
   ansible.builtin.file:
-    dest: '{{ _lidarr_cfg_update_script_path.role_dest }}'
+    dest: '{{ _lidarr_cfg_update_script_path._dest }}'
     state: 'absent'
 
 - name: 'Config | set media root folders'
   ansible.builtin.file:
     path: '{{ item }}'
-    owner: '{{ _lidarr_srv_user.role_uid }}'
-    group: '{{ _lidarr_srv_group.role_gid }}'
+    owner: '{{ _lidarr_srv_user._uid }}'
+    group: '{{ _lidarr_srv_group._gid }}'
     mode: '{{ _lidarr_srv_media_perms_folder.raw }}'
     recurse: '{{ _lidarr_srv_permissions_recursive_enable.raw }}'
     state: 'directory'
@@ -83,7 +83,7 @@
     find '{{ item }}'
     -type f
     -exec chmod {{ _lidarr_srv_media_perms_file.raw }} {};
-      chown {{ _lidarr_srv_user.role_uid }}:{{ _lidarr_srv_group.role_gid }} {} \;
+      chown {{ _lidarr_srv_user._uid }}:{{ _lidarr_srv_group._gid }} {} \;
   changed_when: false  # https://github.com/ansible/ansible/issues/32636
   become: true
   become_user: '{{
@@ -100,8 +100,8 @@
   ansible.builtin.template:
     src: 'config.xml.j2'
     dest: '{{ _lidarr_srv_config_dir.data ~ "config.xml" }}'
-    owner: '{{ _lidarr_srv_user.role_uid }}'
-    group: '{{ _lidarr_srv_group.role_gid }}'
+    owner: '{{ _lidarr_srv_user._uid }}'
+    group: '{{ _lidarr_srv_group._gid }}'
     mode: '0600'
 
 - name: 'Config | Lidarr service'

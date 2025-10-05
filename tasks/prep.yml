@@ -81,11 +81,11 @@
   ansible.builtin.set_fact:
     _lidarr_srv_user: '{{
         _lidarr_srv_user |
-        combine({"role_uid": _lidarr_srv_user_query.uid})
+        combine({"_uid": _lidarr_srv_user_query.uid})
       }}'
     _lidarr_srv_group: '{{
         _lidarr_srv_group |
-        combine({"role_gid": _lidarr_srv_user_query.group})
+        combine({"_gid": _lidarr_srv_user_query.group})
       }}'
 
 - name: 'Prep | stop services'
