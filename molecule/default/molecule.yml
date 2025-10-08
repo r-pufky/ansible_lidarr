@@ -34,11 +34,11 @@ provisioner:
         repo_testing_enable: true
         repo_testing_versions:
           - comment: 'default'
-            version: 'v2.13.3.4711'
+            version: 'v2.14.5.4836'
             asset: '{{
                 lookup("env", "MOLECULE_PROJECT_DIRECTORY") ~
                 "/molecule/cache/" ~
-                "Lidarr.master.2.13.3.4711.linux-core-x64.tar.gz"
+                "Lidarr.master.2.14.5.4836.linux-core-x64.tar.gz"
               }}'
     host_vars:
       lidarr-debian-13-user_data:
@@ -52,7 +52,7 @@ platforms:
     command: '/lib/systemd/systemd'
     pre_build_image: true
     published_ports:
-      - '8686/tcp'
+      - '8686:8686/tcp'
   - name: 'lidarr-debian-13-user_data'
     image: 'ghcr.io/hifis-net/debian-systemd:13'
     systemd: 'always'
