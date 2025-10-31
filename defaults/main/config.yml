@@ -66,15 +66,15 @@ lidarr_cfg_ssl_cert_password: ''
 #
 # Special Case:
 #   * New installs REQUIRE 'none' to create a login user; authentication can be
-#     toggled on after the user exists in the database . Suggest running
-#     initial role application temporarily disabling this option:
+#     toggled on after the user exists in the database. Suggest running initial
+#     role application temporarily disabling this option:
 #
 #     ansible-playbook lidarr.yml -e 'lidarr_cfg_authentication_method=none'
 #
 # Values:
 #   external: Force user creation and auth selection WebUI (first run only).
 #             basic or forms must be used after first run.
-#      basic: Browser pop-up for credentials.
+#       none: No authentication. Highly discouraged.
 #      forms: Login page for credentials (use for password managers) (default).
 #
 # Default: 'forms'.

@@ -26,6 +26,19 @@
 # * https://github.com/Servarr/Wiki/blob/master/servarr/servarr-install-script.sh
 # yamllint enable rule:line-length
 
+- name: 'Annotate | DEPRECATED VARIABLES IN USE ⚠'
+  when: lidarr_cfg_authentication_method | lower == 'basic'
+  ansible.builtin.fail:
+    msg: |
+      ╭───────────────────────────────────────────────────────────────────╮
+      │                                                                   │
+      │                   DEPRECATED VARIABLES IN USE.                    │
+      │                                                                   │
+      ├───────────────────────────────────────────────────────────────────╯
+      │ Refer to defaults and update variables:
+      │
+      │ lidarr_cfg_authentication_method: {{ lidarr_cfg_authentication_method }}
+
 - name: 'Annotate | sanitize & annotate service defaults'
   ansible.builtin.set_fact:  # noqa jinja[spacing] readability.
     _lidarr_srv_version: "{{ {} | r_pufky.data.v3(
@@ -243,6 +256,7 @@
         raw=lidarr_cfg_authentication_method | capitalize,
         default='Forms',
         hint='str',
+        comment='3.0.1 release deprecated basic auth option.',
         order=9
         )
       }}"

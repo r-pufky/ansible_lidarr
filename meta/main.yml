@@ -17,5 +17,6 @@ galaxy_info:
     - 'media'
     - 'audio'
     - 'music'
+    - 'arr'
 
 dependencies: []
