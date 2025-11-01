@@ -3,16 +3,16 @@
   hosts: 'all'
   gather_facts: false
   tasks:
-    - name: 'Converge | apply r_pufky.srv.lidarr'
+    - name: 'Converge | apply r_pufky.arr.lidarr'
       ansible.builtin.include_role:
-        name: 'r_pufky.srv.lidarr'
+        name: 'r_pufky.arr.lidarr'
 
 - name: 'Converge | toggle SSL'
   hosts: 'lidarr-debian-13-enable_ssl-toggle'
   gather_facts: false
   tasks:
-    - name: 'Converge | toggle SSL | apply r_pufky.srv.lidarr'
+    - name: 'Converge | toggle SSL | apply r_pufky.arr.lidarr'
       ansible.builtin.include_role:
-        name: 'r_pufky.srv.lidarr'
+        name: 'r_pufky.arr.lidarr'
       vars:
         lidarr_cfg_enable_ssl: false

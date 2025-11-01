@@ -14,7 +14,7 @@ All ports and protocols have been defined for the role.
 
 ## Dependencies
 **galaxy-ng** roles cannot be used independently. Part of
-[r_pufky.srv](https://github.com/r-pufky/ansible_collection_srv) collection.
+[r_pufky.arr](https://github.com/r-pufky/ansible_collection_arr) collection.
 
 ## Example Playbook
 Read defaults documentation.
@@ -27,7 +27,7 @@ permissions will be set to ensure Lidarr can read files.
   hosts: 'lidarr.example.com'
   become: true
   roles:
-     - 'r_pufky.lidarr'
+     - 'r_pufky.arr.lidarr'
   vars:
     lidarr_srv_version: 'latest'
     lidarr_cfg_api_key: '{{ vault_lidarr_api_key }}'
@@ -52,6 +52,7 @@ Postgres is supported in the role, however, sqlite3 to postgres migrations must
 be done manually. See defaults and Radarr documentation.
 
 [defaults/database.yml](https://github.com/r-pufky/ansible_lidarr/blob/main/defaults/main/database.yml)
+
 [Lidarr Postgres](https://wiki.servarr.com/lidarr/postgres-setup)
 
 ## Development
@@ -68,9 +69,9 @@ Release format: **{OS}-{SERVICE}-{ROLE}**
 Each type inherits the versioning system used; defaulting to schematic
 versioning.
 
-`12.0.0-2.0.3-1.0.0`
+`12-2.0.3-1.0.0`
 
-* 12.0.0 - Debian 12 (bookworm).
+* 12 - Debian 12 (bookworm).
 * 2.0.3 - Service/app version.
 * 1.0.0 - Role version.
 

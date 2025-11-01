@@ -22,11 +22,11 @@
       vars:
         test_name: '{{ "Prepare | cache " ~ test_version }}'
         test_dest: '{{
-            "Lidarr.master.v" ~ test_version ~ ".linux-core-x64.tar.gz"
+            "Lidarr.master." ~ test_version ~ ".linux-core-x64.tar.gz"
           }}'
         test_url: '{{
-            "https://github.com/Lidarr/Lidarr/releases/download/v" ~
-            test_version ~ "/" ~
+            "https://github.com/Lidarr/Lidarr/releases/download/" ~
+            "v" ~ test_version ~ "/" ~
             "Lidarr.master." ~ test_version ~ ".linux-core-x64.tar.gz"
           }}'
         test_mode: '0640'
