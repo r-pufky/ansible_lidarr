@@ -24,11 +24,11 @@
 #   RECOMMEND: Only increment PATCH. Never use 'latest'.
 #
 # Values:
-#   {VERSION}: Tagged release to use ('v3.0.1.4866').
+#   {VERSION}: Tagged release to use ('v3.1.0.4875').
 #      latest: Use latest stable release.
 #
-# Default: 'v3.0.1.4866'.
-lidarr_srv_version: 'v3.0.1.4866'
+# Default: 'v3.1.0.4875'.
+lidarr_srv_version: 'v3.1.0.4875'
 
 # Remove old installs on upgrade success? Default: True.
 lidarr_srv_delete_old_versions_enable: true

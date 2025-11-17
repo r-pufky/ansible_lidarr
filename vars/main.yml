@@ -23,7 +23,7 @@
 # Last time Lidarr options were validated against a default configuration.
 lidarr_role_validate_date: '2025-10-08'
 lidarr_role_validate_release: 'trixie'
-lidarr_role_validate_version: 'v3.0.1.4866'
+lidarr_role_validate_version: 'v3.1.0.4875'
 lidarr_role_validate_script_release: '3.0.12'
 lidarr_role_validate_script_date: '2024-04-09'
 

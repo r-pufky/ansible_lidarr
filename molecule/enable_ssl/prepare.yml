@@ -32,7 +32,7 @@
 
     - name: 'Prepare | parse test version'
       ansible.builtin.set_fact:
-        test_version: '3.0.1.4866'
+        test_version: '3.1.0.4875'
 
     - name: '{{ "Prepare | cache " ~ test_version }}'
       ansible.builtin.include_role:
