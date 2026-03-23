@@ -15,8 +15,14 @@
   <AnalyticsEnabled>False</AnalyticsEnabled>
   <Branch>master</Branch>
   <UpdateAutomatically>False</UpdateAutomatically>
-  <UpdateMechanism>Script</UpdateMechanism>
-  <UpdateScriptPath>/data/lidarr/config/update_script</UpdateScriptPath>
+  <UpdateMechanism>BuiltIn</UpdateMechanism>
+  <UpdateScriptPath></UpdateScriptPath>
   <LaunchBrowser>False</LaunchBrowser>
+  <PostgresHost>localhost</PostgresHost>
+  <PostgresPort>5432</PostgresPort>
+  <PostgresUser>lidarr</PostgresUser>
+  <PostgresPassword>lidarr</PostgresPassword>
+  <PostgresMainDb>lidarr-main</PostgresMainDb>
+  <PostgresLogDb>lidarr-log</PostgresLogDb>
   <Theme>auto</Theme>
 </Config>

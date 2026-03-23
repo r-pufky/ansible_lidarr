@@ -1,0 +1,16 @@
+[Unit]
+Description=Lidarr Daemon.
+After=network.target
+
+[Service]
+Type=simple
+ExecStart={{ lidarr__cfg._app ~ "/Lidarr" }} -nobrowser -data={{ lidarr__cfg._var_dir }}
+TimeoutStopSec=20
+Restart=always
+User={{ lidarr__srv._user }}
+Group={{ lidarr__srv._group }}
+UMask=0002
+KillMode=process
+
+[Install]
+WantedBy=multi-user.target

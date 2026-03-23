@@ -1,11 +1,26 @@
 ---
-- name: 'Annotate'
-  ansible.builtin.include_tasks: 'annotate.yml'
 - name: 'Prep'
   ansible.builtin.include_tasks: 'prep.yml'
+
+- name: 'Backup'
+  when: lidarr_flg_backup
+  ansible.builtin.include_tasks: 'backup.yml'
+
+- name: 'Restore'
+  when: lidarr_flg_restore
+  ansible.builtin.include_tasks: 'restore.yml'
+
+- name: 'Maintenance'
+  when: lidarr_flg_maintenance
+  ansible.builtin.import_tasks: 'maintenance.yml'
+
 - name: 'Install'
+  when: lidarr_flg_install
   ansible.builtin.include_tasks: 'install.yml'
+
 - name: 'Config'
+  when: lidarr_flg_config
   ansible.builtin.include_tasks: 'config.yml'
-- name: 'Validate'
-  ansible.builtin.include_tasks: 'validate.yml'
+
+- name: 'Start'
+  ansible.builtin.include_tasks: 'start.yml'

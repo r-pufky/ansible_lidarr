@@ -3,6 +3,24 @@
   hosts: 'all'
   gather_facts: false
   tasks:
-    - name: 'Converge | apply r_pufky.arr.lidarr'
+    # Inject config.xml and reset DBs; config.xml tested after restore.
+    - name: 'Converge | role | r_pufky.arr.lidarr (pre-configured config.xml)'
       ansible.builtin.include_role:
         name: 'r_pufky.arr.lidarr'
+      vars:
+        lidarr_flg_config: true
+        lidarr_cfg_dir: '{{
+            lookup("env", "MOLECULE_PROJECT_DIRECTORY") ~ "/files/default"
+          }}'
+
+    - name: 'Converge | role | r_pufky.arr.lidarr (create db backup)'
+      ansible.builtin.include_role:
+        name: 'r_pufky.arr.lidarr'
+      vars:
+        lidarr_flg_backup: true
+
+    - name: 'Converge | role | r_pufky.arr.lidarr (restore)'
+      ansible.builtin.include_role:
+        name: 'r_pufky.arr.lidarr'
+      vars:
+        lidarr_flg_restore: true

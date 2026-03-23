@@ -1,172 +1,149 @@
 ---
 ###############################################################################
-# Lidarr Service Configuration
+# Feature Flags
 ###############################################################################
-# Existing databases are migrated automatically when new versions are
-# installed. Migration between database platforms is not supported and must be
-# done manually.
+
+# 1. Backup config to lidarr_cfg_backup_dir?
 #
-# Install size: ~270MB
-#     Lidarr: ~230MB.
-#   Packages: ~38.6MB.
+# Backup existing config data directory and exit role. Creates archive of
+# /var/opt/lidarr. lidarr_cfg_backup_dir created if non-existent. Services
+# stopped, files backed up, services started.
 #
-# Set repo_host_access_token if API is rate limited. See r_pufky.deb.repo.
+# Default: False.
+lidarr_flg_backup: false
+
+# 2. Restore config from backup?
+#
+# Restore config data directory and exit role. Extracts latest backup archive
+# to /var/opt/lidarr. Services stopped, files backed up, services started.
+#
+# Default: False.
+lidarr_flg_restore: false
+
+# 3. Run maintenance tasks?
+#
+# Preform role maintenance tasks including removal of old role versions.
+#
+# Default: True.
+lidarr_flg_maintenance: true
+
+# 1. Install application?
+#
+# Creates required default directories, users, install packages, download
+# software, autogenerates config.xml if not specified, update and start
+# services.
+#
+# Default: True.
+lidarr_flg_install: true
+
+# 2. Set configuration data?
+#
+# Overwrite config data directory sourced from lidarr_cfg_dir. Use backup and
+# restore to manage configuration data. Stops service, deploys user config
+# data, updates and starts services.
+#
+# Default: False.
+lidarr_flg_config: false
+
+###############################################################################
+# Service
+###############################################################################
 
 # Lidarr Release.
 #
 # Versions (Schematic):
-#       MAJOR: Unsafe - requires major role changes; only default MAJOR version
-#              is supported. See other branches if they exist.
+#       MAJOR: Unsafe - Usually requires major role changes; only default MAJOR
+#              version is supported.
 #       MINOR: Safe - Usually requires no role updates. Changes usually
 #              constrained to internal changes requiring no config file or
 #              dependency changes.
 #       PATCH: Safe - Usually requires no role updates.
-#   RECOMMEND: Only increment PATCH. Never use 'latest'.
-#
-# Values:
-#   {VERSION}: Tagged release to use ('v3.1.0.4875').
-#      latest: Use latest stable release.
+#   RECOMMEND: Only increment MINOR.PATCH. Pre-releases unsupported.
 #
 # Default: 'v3.1.0.4875'.
+#
+# Reference:
+# * https://github.com/lidarr/lidarr/releases/latest
 lidarr_srv_version: 'v3.1.0.4875'
 
-# Remove old installs on upgrade success? Default: True.
-lidarr_srv_delete_old_versions_enable: true
-
-# Absolute path to database and metadata location.
+# Github access token (lidarr).
 #
-# Default: '/data/lidarr/config'.
-lidarr_srv_config_dir: '/data/lidarr/config'
-
-# Service Umask. Default: '0002'.
-lidarr_srv_u_mask: '0002'
-
-# Force overwrite existing install?
+# Unauthenticated (anonymous) API requests are heavily restricted to the sum
+# total of requests to github from a given IP. Use an access token if
+# receiving 403's.
 #
-# DATA DESTRUCTIVE.
+# Classic Tokens:
+# * settings > developer settings > personal access tokens (classic)
+#   * notes: {LABEL APPROPRIATELY}
+#   * expiration: {CUSTOM}
+#   * scopes: NONE
 #
-# Removes existing cached downloaded archives and existing same-version install
-# directories (if any). Any user data in these directories are DESTROYED.
+# Fine-grained Tokens:
+# * settings > developer settings > personal access tokens (fine-grained)
+#   * token name: {LABEL APPROPRIATELY}
+#   * expiration: {CUSTOM}
+#   * description: {DESCRIPTIVE TEXT}
+#   * resource owner: {YOUR ACCOUNT}
+#   * repository access: Public Repositories (read-only)
 #
-# Default: False.
-lidarr_srv_force_overwrite: false
-
-# Migrate metadata (MediaCover) directory?
+# Default: '' (unauthenticated).
 #
-# Multi-GB. Safe to delete but will cause large metadata downloads on new
-# version if not migrated with databases.
-#
-# Default: True.
-lidarr_srv_migrate_metadata: true
-
-# Recursively set metadata permissions?
-#
-# Lidarr installations with large media and metadata caches will be excessively
-# slow.
-#
-# Default: False.
-lidarr_srv_permissions_recursive_enable: false
-
-# Automatically restart Lidarr daily?
-#
-# Restarting the Lidarr service will automatically apply any downloaded auto
-# updates.
-#
-# Default: True.
-lidarr_srv_restart_daily_enable: true
-
-# Only apply configuration?
-#
-# Reduces role application time by ONLY applying configuration changes. Does
-# NOT affect lidarr_srv_media_set_perms_file_enable.
-#
-# This should ONLY be used after the role has been fully run once.
-#
-# Useful when adding a change without reconfiguring the whole system or
-# checking and installing a new version. Suggest applying with extra options:
-#
-#   ansible-playbook site.yml
-#       --tags Lidarr
-#       -e '{"lidarr_srv_media_set_perms_file_enable": true}'
-#
-# Default: False.
-lidarr_srv_force_config_only_enable: false
-
-###############################################################################
-# Lidarr User
-###############################################################################
+# Reference:
+# * https://docs.github.com/en/authentication
+lidarr_srv_token: ''
 
 # User that Lidarr will run under.
 #
-# Enable lidarr_srv_create_user if this account is not externally managed.
+# 'media' will automatically be created using vars/main.yml if required.
+# All other accounts are checked for existence.
 #
 # Default: 'media'.
 lidarr_srv_user: 'media'
 
 # Group that Lidarr will run under.
 #
-# Enable lidarr_srv_create_user if this group is not externally managed.
+# 'media' will automatically be created using vars/main.yml if required.
+# All other accounts are checked for existence.
 #
 # Default: 'media'.
 lidarr_srv_group: 'media'
 
-# Create lidarr_srv_user, lidarr_srv_group if not detected?
+###############################################################################
+# Config
+###############################################################################
+
+# Lidarr configuration to set.
 #
-# Applied via r_pufky.deb.users, see vars/main.yml for default user attributes.
+# Ansible controller path to source configuration files (treated as a jinja2
+# templates allowing for ansible variable interpretation). Overwrites existing
+# config data in /var/opt/lidarr/*. SQlite databases should be included or use
+# restore. Files not sourced will be removed (metadata MediaCover directory
+# will not be touched).
+#
+# A default configuration is autogenerated if not provided.
+#
+# Use lidarr_flg_backup, lidarr_flg_restore to include MediaCover metadata.
+#
+# deluge_cfg_dir: 'host_vars/lidarr.example.com/config'
+#
+# Default: '' (use minimally configured default).
+lidarr_cfg_dir: ''
+
+# Role backup location.
+#
+# All backup operations for a given role execution are stored locally on
+# ansible controller with the format 'YYYY-MM-DDTHHMMSS_{FILE}'.
+#
+# lidarr_cfg_backup_dir: 'data/lidarr'
+#
+# Default: ''
+lidarr_cfg_backup_dir: ''
+
+# Backup metadata (MediaCover) directory?
+#
+# Multi-GB. Safe to delete. Will cause large backup/restore transfers or
+# re-download of metadata when service is restarted. Alternatively externally
+# manage /var/opt/lidarr/MediaCover .
 #
 # Default: True.
-lidarr_srv_create_user: true
-
-###############################################################################
-# Media Permissions
-###############################################################################
-
-# Root media storage folders.
-#
-# Folders will be created/set with lidarr_srv_user, lidarr_srv_group,
-# lidarr_srv_media_perms_folder.
-#
-# Default: [].
-lidarr_srv_media_root_folders: []
-
-# Enable user management of data/media files?
-#
-# Use lidarr_srv_user to execute data/media management commands. Role
-# applies media permissions using 'root' by default. For mounted data locations
-# (NFS with squashed mounts, mapped container mounts, etc) the local root user
-# will not have sufficient privileges to modify these files.
-#
-# Applies to:
-# * lidarr_srv_config_dir
-# * lidarr_srv_media_root_folders
-#
-# Default: False.
-lidarr_srv_user_data_manage_enable: false
-
-# Media folder permissions octal.
-#
-# Media folders specified by lidarr_srv_media_root_folders will always be
-# recursively set using lidarr_srv_media_perms_folder, lidarr_srv_user, and
-# lidarr_srv_group.
-#
-# Default: '0755'.
-lidarr_srv_media_perms_folder: '0755'
-
-# Enable setting of media file permissions?
-#
-# Set file permissions within lidarr_srv_media_root_folders using
-# lidarr_srv_media_perms_file, lidarr_srv_user, and lidarr_srv_group. Large
-# sets of files may be slow to set permissions.
-#
-# Useful when first configuring to ensure service has access to all specified
-# media locations. Suggest applying with extra options:
-#
-#   ansible-playbook site.yml
-#       --tags Lidarr
-#       -e '{"lidarr_srv_media_set_perms_file_enable": true}'
-#
-# Default: False.
-lidarr_srv_media_set_perms_file_enable: false
-
-# Media file permissions octal. Default: '0644'.
-lidarr_srv_media_perms_file: '0644'
+lidarr_cfg_backup_metadata: true
