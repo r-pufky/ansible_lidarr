@@ -7,8 +7,8 @@
   <SslPort>6868</SslPort>
   <SslCertPath></SslCertPath>
   <SslCertPassword></SslCertPassword>
-  <AuthenticationMethod>Forms</AuthenticationMethod>
-  <AuthenticationRequired>DisabledForLocalAddresses</AuthenticationRequired>
+  <AuthenticationMethod>None</AuthenticationMethod>
+  <AuthenticationRequired>Enabled</AuthenticationRequired>
   <ApiKey>abcdef1234567890abcdef1234567890</ApiKey>
   <LogLevel>info</LogLevel>
   <LogSizeLimit>1</LogSizeLimit>
@@ -20,3 +20,4 @@
   <LaunchBrowser>False</LaunchBrowser>
   <Theme>auto</Theme>
 </Config>
+

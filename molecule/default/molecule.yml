@@ -2,8 +2,7 @@
 ###############################################################################
 # Default
 ###############################################################################
-# Default configuration is deployed successfully. Configuration should succeed
-# with and without lidarr_srv_user_data_manage_enable.
+# Default configuration is deployed successfully.
 #
 # Tests:
 # * files/default/config.xml set.

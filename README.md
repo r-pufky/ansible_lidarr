@@ -28,7 +28,7 @@ manually.
 PostgreSQL 14+ is highly recommended over default SQLite database.
 
 Postgres requires pre-existing databases with root privileges to initialize
-tables and manage migrations. Postgres databases are NOT backed up by Sonarr
+tables and manage migrations. Postgres databases are NOT backed up by Lidarr
 and must be managed outside of this role. An example postgres [config.xml][m]
 is provided within the role.
 
@@ -46,7 +46,7 @@ Tasks are gated by feature flags and executed in the following order.
   5    | lidarr_flg_config      | Install user-defined config.
 
 ### Example Playbooks
-Sonarr will automatically generate a configuration file if one is not provided.
+Lidarr will automatically generate a configuration file if one is not provided.
 Example configuration files are located in [files][n].
 
 #### New Deployments
@@ -108,14 +108,14 @@ molecule test --all
 
 ### [Releases][b]
 
- Release | Debian | Ansible | Lidarr | Notes
----------|--------|---------|--------|-------
- 6.x.x   | 13     | 2.20    | V3     | Ansible 2.20, feature flags, and semantic versioning.
- 5.x.x   | 13     | 2.18    | V3     | Migrate to r_pufky.arr.
- 4.x.x   | 13     | 2.18    | V3     | Migrate to Debian Trixie.
- 3.x.x   | 12     | 2.18    | V2     | Implement data annotations.
- 2.x.x   | 12     | 2.18    | V2     | Migrate to Lidarr V2.
- 1.x.x   | 12     | 2.11    | V0     | Migration from private repository.
+  Release | Debian | Ansible | Lidarr | Notes
+ ---------|--------|---------|--------|-------
+  6.x.x   | 13     | 2.20    | V3     | Ansible 2.20, feature flags, and semantic versioning.
+  5.x.x   | 13     | 2.18    | V3     | Migrate to r_pufky.arr.
+  4.x.x   | 13     | 2.18    | V3     | Migrate to Debian Trixie.
+  3.x.x   | 12     | 2.18    | V2     | Implement data annotations.
+  2.x.x   | 12     | 2.18    | V2     | Migrate to Lidarr V2.
+  1.x.x   | 12     | 2.11    | V0     | Migration from private repository.
 
 ## Issues
 Create a bug and provide as much information as possible.
