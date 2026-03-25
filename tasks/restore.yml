@@ -39,10 +39,14 @@
   ansible.builtin.command: '{{
       "/usr/bin/tar -xJpf " ~
       "/tmp/" ~ lidarr__restore_archive | basename ~
-      " -C " ~ lidarr__cfg._var_dir ~ " --overwrite &&" ~
-      "rm -f " ~  "/tmp/" ~ lidarr__restore_archive | basename
+      " -C " ~ lidarr__cfg._var_dir ~ " --overwrite"
     }}'
   changed_when: true
+
+- name: 'Restore | filesystem | cleanup'
+  ansible.builtin.file:
+    path: '{{ "/tmp/" ~ lidarr__restore_archive | basename }}'
+    state: 'absent'
 
 - name: 'Restore | start'
   ansible.builtin.import_tasks: 'start.yml'

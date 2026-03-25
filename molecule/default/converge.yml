@@ -1,4 +1,6 @@
 ---
+# Backup/Restore are controlled exits and must be called in separate plays or
+# it will consider play complete and move to verify.
 - name: 'Converge'
   hosts: 'all'
   gather_facts: false
@@ -19,6 +21,10 @@
       vars:
         lidarr_flg_backup: true
 
+- name: 'Converge'
+  hosts: 'all'
+  gather_facts: false
+  tasks:
     - name: 'Converge | role | r_pufky.arr.lidarr (restore)'
       ansible.builtin.include_role:
         name: 'r_pufky.arr.lidarr'
