@@ -10,7 +10,7 @@
 - name: 'Restore | filesystem | enumerate all backups'
   delegate_to: 'localhost'
   ansible.builtin.find:
-    paths: '{{ lidarr__cfg._backup_dir }}'
+    paths: '{{ lidarr__cfg._backup_d }}'
     patterns: '*.tar.xz'
     file_type: 'file'
     recurse: false
@@ -39,7 +39,7 @@
   ansible.builtin.command: '{{
       "/usr/bin/tar -xJpf " ~
       "/tmp/" ~ lidarr__restore_archive | basename ~
-      " -C " ~ lidarr__cfg._var_dir ~ " --overwrite"
+      " -C " ~ lidarr___app._var_d ~ " --overwrite"
     }}'
   changed_when: true
 

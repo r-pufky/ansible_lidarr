@@ -3,10 +3,10 @@
 # Feature Flags
 ###############################################################################
 
-# 1. Backup config to lidarr_cfg_backup_dir?
+# 1. Backup config to lidarr_cfg_backup_d?
 #
 # Backup existing config data directory and exit role. Creates archive of
-# /var/opt/lidarr. lidarr_cfg_backup_dir created if non-existent. Services
+# /var/opt/lidarr. lidarr_cfg_backup_d created if non-existent. Services
 # stopped, files backed up, services started.
 #
 # Default: False.
@@ -38,7 +38,7 @@ lidarr_flg_install: true
 
 # 5. Set configuration data?
 #
-# Overwrite config data directory sourced from lidarr_cfg_dir. Use backup and
+# Overwrite config data directory sourced from lidarr_cfg_d. Use backup and
 # restore to manage configuration data. Stops service, deploys user config
 # data, updates and starts services.
 #
@@ -124,20 +124,20 @@ lidarr_srv_group: 'media'
 #
 # Use lidarr_flg_backup, lidarr_flg_restore to include MediaCover metadata.
 #
-# deluge_cfg_dir: 'host_vars/lidarr.example.com/config'
+# lidarr_cfg_d: 'host_vars/lidarr.example.com/config'
 #
 # Default: '' (use minimally configured default).
-lidarr_cfg_dir: ''
+lidarr_cfg_d: ''
 
 # Role backup location.
 #
 # All backup operations for a given role execution are stored locally on
 # ansible controller with the format 'YYYY-MM-DDTHHMMSS_{FILE}'.
 #
-# lidarr_cfg_backup_dir: 'data/lidarr'
+# lidarr_cfg_backup_d: 'data/lidarr'
 #
 # Default: ''
-lidarr_cfg_backup_dir: ''
+lidarr_cfg_backup_d: ''
 
 # Backup metadata (MediaCover) directory?
 #

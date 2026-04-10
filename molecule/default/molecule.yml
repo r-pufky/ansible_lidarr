@@ -5,7 +5,7 @@
 # Default configuration is deployed successfully.
 #
 # Tests:
-# * files/default/config.xml set.
+# * templates/default/config.xml set.
 # * lidarr.service active and running.
 # * Standard role run with auto generation (during prep).
 # * Standard role run with injected config.xml.
@@ -27,8 +27,8 @@ provisioner:
   inventory:
     group_vars:
       all:
-        url_inject_enable: true
-        lidarr_cfg_backup_dir: '/tmp/ansible_lidarr_test'
+        molecule_flg_inject: true
+        lidarr_cfg_backup_d: '/tmp/ansible_lidarr_test'
         lidarr_cfg_backup_metadata: false
 platforms:
   - name: 'lidarr-default'

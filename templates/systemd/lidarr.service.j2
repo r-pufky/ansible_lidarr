@@ -4,7 +4,7 @@ After=network.target
 
 [Service]
 Type=simple
-ExecStart={{ lidarr__cfg._app ~ "/Lidarr" }} -nobrowser -data={{ lidarr__cfg._var_dir }}
+ExecStart={{ lidarr__cfg._app_d ~ "/Lidarr" }} -nobrowser -data={{ lidarr___app._var_d }}
 TimeoutStopSec=20
 Restart=always
 User={{ lidarr__srv._user }}

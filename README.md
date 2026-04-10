@@ -68,7 +68,7 @@ DB's, etc. Existing installs likely want to use **backup** and **restore**.
     name: 'r_pufky.arr.lidarr'
   vars:
     lidarr_flg_config: true
-    lidarr_cfg_dir: 'host_vars/lidarr.example.com/data'
+    lidarr_cfg_d: 'host_vars/lidarr.example.com/data'
 ```
 
 #### Dynamic Deployments
@@ -88,14 +88,14 @@ or leave lidarr_flg_config disabled to leave existing config untouched.
     name: 'r_pufky.arr.lidarr'
   vars:
     lidarr_flg_backup: true
-    lidarr_cfg_backup_dir: '/tmp'
+    lidarr_cfg_backup_d: '/tmp'
 
 - name: 'Restore from backup.'
   ansible.builtin.include_role:
     name: 'r_pufky.arr.lidarr'
   vars:
     lidarr_flg_restore: true
-    lidarr_cfg_backup_dir: '/tmp'
+    lidarr_cfg_backup_d: '/tmp'
 ```
 
 ## Development
@@ -142,7 +142,7 @@ PGP: [466EEC2B67516C7117C85CE3A0BC35D16698BAB9][d] | [github gist][e]
 [j]: https://github.com/r-pufky/ansible_lidarr/tree/main/defaults/main/main.yml
 [k]: https://github.com/r-pufky/ansible_lidarr/blob/main/defaults/main/ports.yml
 [l]: https://wiki.servarr.com/lidarr/postgres-setup
-[m]: https://github.com/r-pufky/ansible_lidarr/blob/main/files/postgres/config.xml
-[n]: https://github.com/r-pufky/ansible_lidarr/blob/main/files/
+[m]: https://github.com/r-pufky/ansible_lidarr/blob/main/templates/postgres/config.xml
+[n]: https://github.com/r-pufky/ansible_lidarr/blob/main/templates/
 [o]: https://lidarr.audio
 [p]: https://wiki.servarr.com/lidarr/faq#forced-authentication

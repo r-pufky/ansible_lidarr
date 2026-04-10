@@ -9,17 +9,17 @@
             lookup("env", "MOLECULE_PROJECT_DIRECTORY") ~ "/vars/main.yml"
           }}'
 
-    - name: '{{ "Verify | test | " ~ lidarr___app._cfg }}'
+    - name: '{{ "Verify | test | " ~ lidarr___app._config_xml }}'
       ansible.builtin.include_role:
         name: 'r_pufky.data.test'
         tasks_from: 'copy.yml'
       vars:
-        test_name: '{{ "Verify | test | " ~ lidarr___app._cfg }}'
+        test_name: '{{ "Verify | test | " ~ lidarr___app._config_xml }}'
         test_src: '{{
             lookup("env", "MOLECULE_PROJECT_DIRECTORY") ~
-            "/files/default/config.xml"
+            "/templates/default/config.xml"
           }}'
-        test_file: '{{ lidarr___app._cfg }}'
+        test_file: '{{ lidarr___app._config_xml }}'
         test_owner: 'media'
         test_group: 'media'
         test_mode: '0640'

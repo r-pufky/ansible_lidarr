@@ -19,23 +19,19 @@
 
 - name: 'Install | filesystem | set system directories'
   ansible.builtin.file:
-    path: '{{ item }}'
+    path: '{{ lidarr___app._src_d }}'
     owner: 'root'
     group: 'root'
     mode: '0755'
     state: 'directory'
-  loop:
-    - '{{ lidarr___app._src_dir }}'
 
 - name: 'Install | filesystem | set service directories'
   ansible.builtin.file:
-    path: '{{ item }}'
+    path: '{{ lidarr___app._var_d }}'
     owner: '{{ lidarr__srv._user }}'
     group: '{{ lidarr__srv._group }}'
     mode: '0755'
     state: 'directory'
-  loop:
-    - '{{ lidarr___app._var_dir }}'
 
 - name: 'Install | packages'
   ansible.builtin.include_role:
@@ -47,7 +43,7 @@
 
 - name: 'Install | filesystem | find previous installations'
   ansible.builtin.find:
-    paths: '{{ lidarr__cfg._src_dir }}'
+    paths: '{{ lidarr___app._src_d }}'
     file_type: 'directory'
     recurse: false
     excludes:
@@ -63,7 +59,7 @@
     label: '{{ item.path }}'
 
 - name: 'Install | url | 🗘 Lidarr (~1 minute) 🗘'
-  when: not (url_inject_enable | default(false))
+  when: not (molecule_flg_inject | default(false))
   ansible.builtin.get_url:
     url: '{{ lidarr__cfg._url }}'
     dest: '{{ "/tmp/" ~ lidarr__cfg._package }}'
@@ -76,9 +72,9 @@
   register: lidarr__cmd
   until: lidarr__cmd is succeeded
 
-- name: '{{ "Install | filesystem | set " ~ lidarr__cfg._app }}'
+- name: '{{ "Install | filesystem | set " ~ lidarr__cfg._app_d }}'
   ansible.builtin.file:
-    path: '{{ lidarr__cfg._app }}'
+    path: '{{ lidarr__cfg._app_d }}'
     owner: 'root'
     group: 'root'
     mode: '0755'
@@ -86,19 +82,19 @@
 
 - name: 'Install | filesystem | unpack Lidarr'
   ansible.builtin.unarchive:
-    creates: '{{ lidarr__cfg._app ~ "/Lidarr" }}'
+    creates: '{{ lidarr__cfg._app_d ~ "/Lidarr" }}'
     src: '{{ "/tmp/" ~ lidarr__cfg._package }}'
     remote_src: true
-    dest: '{{ lidarr__cfg._app }}'
+    dest: '{{ lidarr__cfg._app_d }}'
     owner: 'root'
     group: 'root'
     mode: 'a-st'
     extra_opts: ['--strip-components=1']
 
-- name: '{{ "Install | filesystem | set " ~ lidarr__cfg._service }}'
+- name: '{{ "Install | filesystem | set " ~ lidarr___app._service }}'
   ansible.builtin.template:
     src: 'systemd/lidarr.service.j2'
-    dest: '{{ lidarr__cfg._service }}'
+    dest: '{{ lidarr___app._service }}'
     owner: 'root'
     group: 'root'
     mode: '0644'

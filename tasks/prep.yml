@@ -16,19 +16,19 @@
         _user=lidarr_srv_user,
         _group=lidarr_srv_group,
       ) }}"
-    lidarr__cfg: "{{ lidarr___app | r_pufky.data.v3(
+    lidarr__cfg: "{{ {} | r_pufky.data.v3(
 
         _version=lidarr_srv_version,
         _package=(
           'Lidarr.master.' ~ lidarr_srv_version[1:] ~ '.linux-core-x64.tar.gz'
         ),
-        _app='/opt/lidarr/src/' ~ lidarr_srv_version,
+        _app_d='/opt/lidarr/src/' ~ lidarr_srv_version,
         _url=(
           lidarr___repo_url ~ lidarr_srv_version ~ '/' ~
           'Lidarr.master.' ~ lidarr_srv_version[1:] ~ '.linux-core-x64.tar.gz'
         ),
-        _dir=lidarr_cfg_dir | regex_replace('\\/$', ''),
-        _backup_dir=lidarr_cfg_backup_dir | regex_replace('\\/$', ''),
+        _d=lidarr_cfg_d | regex_replace('\\/$', ''),
+        _backup_d=lidarr_cfg_backup_d | regex_replace('\\/$', ''),
         _backup_metadata=lidarr_cfg_backup_metadata,
       ) }}"
 
@@ -37,42 +37,42 @@
   ansible.builtin.assert:
     quiet: true
     that:
-      - lidarr__cfg._backup_dir | length > 0
+      - lidarr__cfg._backup_d | length > 0
     fail_msg: |
 
       ✘ Backup location not set.
       Backups enabled but no backup location defined.
 
       lidarr_flg_backup: {{ lidarr_flg_backup }}
-      lidarr_cfg_backup_dir: {{ lidarr__cfg._backup_dir }}
+      lidarr_cfg_backup_d: {{ lidarr__cfg._backup_d }}
 
 - name: 'Prep | assert | restore enabled and location defined'
   when: lidarr_flg_restore
   ansible.builtin.assert:
     quiet: true
     that:
-      - lidarr__cfg._backup_dir | length > 0
+      - lidarr__cfg._backup_d | length > 0
     fail_msg: |
 
       ✘ Backup location not set.
       Backups enabled but no backup location defined.
 
       lidarr_flg_restore: {{ lidarr_flg_restore }}
-      lidarr_cfg_backup_dir: {{ lidarr__cfg._backup_dir }}
+      lidarr_cfg_backup_d: {{ lidarr__cfg._backup_d }}
 
 - name: 'Prep | assert | config enabled and source defined'
   when: lidarr_flg_config
   ansible.builtin.assert:
     quiet: true
     that:
-      - lidarr__cfg._dir | length > 0
+      - lidarr__cfg._d | length > 0
     fail_msg: |
 
       ✘ Config source not set.
       Config source enabled but no config source defined.
 
       lidarr_flg_config: {{ lidarr_flg_config }}
-      lidarr_cfg_dir: {{ lidarr__cfg._dir }}
+      lidarr_cfg_d: {{ lidarr__cfg._d }}
 
 - name: '{{ "Prep | account | query user " ~ lidarr__srv._user }}'
   ansible.builtin.command: '{{ "id " ~ lidarr__srv._user }}'

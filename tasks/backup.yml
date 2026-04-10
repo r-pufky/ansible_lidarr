@@ -23,11 +23,11 @@
 
 - name: 'Backup | filesystem | set backup location'
   when:
-    lidarr__cfg._backup_dir | length > 0 and lidarr__cfg._backup_dir != '/tmp'
+    lidarr__cfg._backup_d | length > 0 and lidarr__cfg._backup_d != '/tmp'
   delegate_to: 'localhost'
   run_once: true
   ansible.builtin.file:
-    path: '{{ lidarr__cfg._backup_dir }}'
+    path: '{{ lidarr__cfg._backup_d }}'
     mode: '0750'
     state: directory
 
@@ -39,7 +39,7 @@
     }}'
   args:
     executable: '/bin/bash'
-    chdir: '{{ lidarr__cfg._var_dir }}'
+    chdir: '{{ lidarr___app._var_d }}'
   changed_when: true
 
 - name:
@@ -47,7 +47,7 @@
   ansible.posix.synchronize:
     mode: pull
     src: '{{ lidarr__archive }}'
-    dest: '{{ lidarr__cfg._backup_dir ~ "/" }}'
+    dest: '{{ lidarr__cfg._backup_d ~ "/" }}'
 
 - name: 'Backup | filesystem | cleanup'
   ansible.builtin.file:
