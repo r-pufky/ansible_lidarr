@@ -10,7 +10,10 @@ Restart=always
 User={{ lidarr__srv._user }}
 Group={{ lidarr__srv._group }}
 UMask=0002
-KillMode=process
+
+# Always kill sub-processes for non-docker installs. Allow 5 seconds to settle.
+KillMode=control-group
+RestartSec=5
 
 [Install]
 WantedBy=multi-user.target
