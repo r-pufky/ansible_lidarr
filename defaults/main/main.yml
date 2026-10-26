@@ -60,11 +60,11 @@ lidarr_flg_config: false
 #       PATCH: Safe - Usually requires no role updates.
 #   RECOMMEND: Only increment MINOR.PATCH. Pre-releases unsupported.
 #
-# Default: 'v3.1.0.4875'.
+# Default: 'v3.1.6.5079'.
 #
 # Reference:
 # * https://github.com/lidarr/lidarr/releases/latest
-lidarr_srv_version: 'v3.1.0.4875'
+lidarr_srv_version: 'v3.1.6.5079'
 
 # Github access token (lidarr).
 #

@@ -19,4 +19,6 @@
   <UpdateScriptPath></UpdateScriptPath>
   <LaunchBrowser>False</LaunchBrowser>
   <Theme>auto</Theme>
+  <AllowedHosts></AllowedHosts>
+  <TrustedNetworks></TrustedNetworks>
 </Config>
